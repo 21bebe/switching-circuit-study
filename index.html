@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>スイッチング回路理論 中間試験対策ラボ</title>
+  <meta name="description" content="スイッチング回路理論（中間試験範囲）の要点まとめ・SVG回路図・過去問解説・インタラクティブ計算トレーナー・記述フラッシュカード">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Mobile Header -->
+  <header class="mobile-header">
+    <button id="menu-toggle" class="icon-btn" aria-label="メニューを開く">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <a href="#home" class="mobile-brand">スイッチング回路 対策ラボ</a>
+    <span id="mobile-progress-pill" class="progress-pill">0%</span>
+  </header>
+
+  <div id="sidebar-backdrop" class="sidebar-backdrop"></div>
+
+  <div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar" class="sidebar" aria-label="学習ナビゲーション">
+      <div class="sidebar-head">
+        <a href="#home" class="brand">
+          <span class="brand-badge">論理回路</span>
+          <span class="brand-title">スイッチング回路理論</span>
+          <span class="brand-sub">中間試験対策（電卓持込不可）</span>
+        </a>
+        <button id="menu-close" class="icon-btn mobile-only" aria-label="閉じる">✕</button>
+      </div>
+
+      <div class="progress-card">
+        <div class="progress-card-top">
+          <span class="progress-label">試験範囲の到達度</span>
+          <strong id="sidebar-progress-text" class="mono">0%</strong>
+        </div>
+        <div class="progress-track">
+          <div id="sidebar-progress-fill" class="progress-fill" style="width: 0%"></div>
+        </div>
+        <div id="sidebar-progress-detail" class="progress-sub">チェック項目 0 / 0</div>
+      </div>
+
+      <div class="search-box">
+        <input type="search" id="global-search" placeholder="用語・回路名で検索 (例: CLA, 励起表)" autocomplete="off">
+      </div>
+
+      <nav class="nav-scroll">
+        <div class="nav-group-label">ダッシュボード</div>
+        <a href="#home" class="nav-item" data-route="home">
+          <span class="nav-code">00</span>
+          <span>学習トップ・試験範囲一覧</span>
+        </a>
+
+        <div class="nav-group-label">単元別まとめ（教科書＋講義）</div>
+        <a href="#unit-1" class="nav-item" data-route="unit-1">
+          <span class="nav-code">3.5</span>
+          <span>Q-M法と論理関数の簡単化</span>
+        </a>
+        <a href="#unit-2" class="nav-item" data-route="unit-2">
+          <span class="nav-code">4.3-5</span>
+          <span>加算器・CLA・減算器・比較器</span>
+        </a>
+        <a href="#unit-3" class="nav-item" data-route="unit-3">
+          <span class="nav-code">4.6</span>
+          <span>エンコーダ・デコーダ・符号変換</span>
+        </a>
+        <a href="#unit-4" class="nav-item" data-route="unit-4">
+          <span class="nav-code">4.7</span>
+          <span>マルチプレクサ・デマルチプレクサ</span>
+        </a>
+        <a href="#unit-5" class="nav-item" data-route="unit-5">
+          <span class="nav-code">5.1-4</span>
+          <span>順序回路・FF・入力方程式</span>
+        </a>
+        <a href="#unit-6" class="nav-item" data-route="unit-6">
+          <span class="nav-code">第7回</span>
+          <span>FF時間定数・非同期式カウンタ</span>
+        </a>
+
+        <div class="nav-group-label">実践・演習ツール</div>
+        <a href="#past-exam" class="nav-item nav-accent" data-route="past-exam">
+          <span class="nav-code">過去問</span>
+          <span>中間試験（山田）完全攻略</span>
+        </a>
+        <a href="#exercises" class="nav-item" data-route="exercises">
+          <span class="nav-code">演習</span>
+          <span>講義演習・課題セレクト</span>
+        </a>
+        <a href="#trainers" class="nav-item" data-route="trainers">
+          <span class="nav-code">実践</span>
+          <span>計算手順トレーナー＆シミュレータ</span>
+        </a>
+        <a href="#flashcards" class="nav-item" data-route="flashcards">
+          <span class="nav-code">暗記</span>
+          <span>記述対策・重要語句カード</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main id="main-content" class="main-content" tabindex="-1">
+      <!-- Dynamically rendered by js/app.js -->
+    </main>
+  </div>
+
+  <!-- Mobile Bottom Quick Bar -->
+  <nav class="mobile-bottom-nav" aria-label="クイック移動">
+    <a href="#home" class="bottom-nav-item" data-route="home">
+      <span>範囲</span>
+    </a>
+    <a href="#unit-1" class="bottom-nav-item" data-route="units">
+      <span>単元</span>
+    </a>
+    <a href="#past-exam" class="bottom-nav-item" data-route="past-exam">
+      <span>過去問</span>
+    </a>
+    <a href="#trainers" class="bottom-nav-item" data-route="trainers">
+      <span>計算機</span>
+    </a>
+    <a href="#flashcards" class="bottom-nav-item" data-route="flashcards">
+      <span>暗記</span>
+    </a>
+  </nav>
+
+  <script defer src="js/diagrams.js"></script>
+  <script defer src="js/data-units.js"></script>
+  <script defer src="js/data-exams.js"></script>
+  <script defer src="js/data-cards.js"></script>
+  <script defer src="js/trainers.js"></script>
+  <script defer src="js/app.js"></script>
+</body>
+</html>
