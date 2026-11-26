@@ -9,6 +9,15 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('switch_study_theme_v1');
+        var dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (dark) document.documentElement.setAttribute('data-theme', 'dark');
+      } catch (e) {}
+    })();
+  </script>
 </head>
 <body>
   <!-- Mobile Header -->
@@ -17,7 +26,10 @@
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
     <a href="#home" class="mobile-brand">スイッチング回路 対策ラボ</a>
-    <span id="mobile-progress-pill" class="progress-pill">0%</span>
+    <div style="display:flex;align-items:center;gap:6px;">
+      <button class="icon-btn theme-toggle-btn" aria-label="テーマを切り替え" title="ダーク/ライト切替"></button>
+      <span id="mobile-progress-pill" class="progress-pill">0%</span>
+    </div>
   </header>
 
   <div id="sidebar-backdrop" class="sidebar-backdrop"></div>
@@ -31,7 +43,10 @@
           <span class="brand-title">スイッチング回路理論</span>
           <span class="brand-sub">中間試験対策（電卓持込不可）</span>
         </a>
-        <button id="menu-close" class="icon-btn mobile-only" aria-label="閉じる">✕</button>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <button class="icon-btn theme-toggle-btn" aria-label="テーマを切り替え" title="ダーク/ライト切替"></button>
+          <button id="menu-close" class="icon-btn mobile-only" aria-label="閉じる">✕</button>
+        </div>
       </div>
 
       <div class="progress-card">

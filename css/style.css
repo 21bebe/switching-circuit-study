@@ -1187,3 +1187,144 @@ table.logic-table .hi-ess {
     display: block !important;
   }
 }
+
+/* =========================================================
+   Dark Mode Theme
+   ========================================================= */
+[data-theme="dark"] {
+  --bg-page: #0b1120;
+  --bg-surface: #111827;
+  --bg-subtle: #1e293b;
+  --bg-code: #1e293b;
+
+  --ink-primary: #f1f5f9;
+  --ink-secondary: #cbd5e1;
+  --ink-muted: #94a3b8;
+
+  --border: #1e293b;
+  --border-strong: #334155;
+
+  --accent: #60a5fa;
+  --accent-hover: #3b82f6;
+  --accent-soft: rgba(59, 130, 246, 0.16);
+  --accent-border: rgba(96, 165, 250, 0.38);
+
+  --ok: #34d399;
+  --ok-soft: rgba(16, 185, 129, 0.15);
+  --ok-border: rgba(52, 211, 153, 0.35);
+
+  --warn: #fbbf24;
+  --warn-soft: rgba(245, 158, 11, 0.15);
+  --warn-border: rgba(251, 191, 36, 0.35);
+
+  --danger: #f87171;
+  --danger-soft: rgba(239, 68, 68, 0.15);
+  --danger-border: rgba(248, 113, 113, 0.35);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.45);
+}
+
+[data-theme="dark"] .hero {
+  background-image:
+    linear-gradient(to right, rgba(51, 65, 85, 0.38) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(51, 65, 85, 0.38) 1px, transparent 1px);
+}
+
+[data-theme="dark"] table.logic-table tr:nth-child(even) td {
+  background: rgba(30, 41, 59, 0.45);
+}
+
+[data-theme="dark"] .reveal-panel {
+  background: var(--bg-surface);
+}
+
+[data-theme="dark"] .reveal-panel.hint-panel {
+  background: var(--accent-soft);
+}
+
+[data-theme="dark"] .diagram-box {
+  background: #0f172a;
+}
+
+[data-theme="dark"] .bit-btn,
+[data-theme="dark"] .qm-minterm-btn {
+  background: var(--bg-surface);
+  color: var(--ink-secondary);
+}
+
+[data-theme="dark"] .bit-btn.is-1 {
+  background: #2563eb;
+  border-color: #3b82f6;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .btn-primary {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .btn-primary:hover {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+[data-theme="dark"] .btn-warn {
+  background: #d97706;
+  border-color: #d97706;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .btn-ok {
+  background: #059669;
+  border-color: #059669;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .nav-item.active .nav-code {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .nav-item.nav-accent.active .nav-code {
+  background: #d97706;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .tab-btn.active {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #ffffff;
+}
+
+[data-theme="dark"] input[type="number"] {
+  background: var(--bg-subtle);
+  color: var(--ink-primary);
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+}
+
+/* Dark Mode SVG Circuit Diagram Overrides */
+[data-theme="dark"] .diagram-box svg .w { stroke: #cbd5e1 !important; }
+[data-theme="dark"] .diagram-box svg .wb { stroke: #60a5fa !important; }
+[data-theme="dark"] .diagram-box svg .wr { stroke: #f87171 !important; }
+[data-theme="dark"] .diagram-box svg .wg { stroke: #34d399 !important; }
+[data-theme="dark"] .diagram-box svg .wd { stroke: #475569 !important; }
+[data-theme="dark"] .diagram-box svg .box { fill: #1e293b !important; stroke: #94a3b8 !important; }
+[data-theme="dark"] .diagram-box svg .box-b { fill: #172554 !important; stroke: #60a5fa !important; }
+[data-theme="dark"] .diagram-box svg .box-w { fill: #451a03 !important; stroke: #f59e0b !important; }
+[data-theme="dark"] .diagram-box svg .gate { fill: #1e293b !important; stroke: #cbd5e1 !important; }
+[data-theme="dark"] .diagram-box svg .dot { fill: #e2e8f0 !important; }
+[data-theme="dark"] .diagram-box svg .lbl { fill: #f1f5f9 !important; }
+[data-theme="dark"] .diagram-box svg .lbl-s { fill: #94a3b8 !important; }
+[data-theme="dark"] .diagram-box svg .lbl-b { fill: #93c5fd !important; }
+[data-theme="dark"] .diagram-box svg .lbl-r { fill: #fca5a5 !important; }
+[data-theme="dark"] .diagram-box svg .lbl-g { fill: #6ee7b7 !important; }
+[data-theme="dark"] .diagram-box svg rect[fill="#eff6ff"] { fill: rgba(59, 130, 246, 0.18) !important; }
+[data-theme="dark"] .diagram-box svg rect[fill="#fffbeb"] { fill: rgba(245, 158, 11, 0.18) !important; }
+[data-theme="dark"] .diagram-box svg polygon[fill="#0f172a"] { fill: #cbd5e1 !important; }
+[data-theme="dark"] .diagram-box svg polygon[fill="#1d4ed8"] { fill: #60a5fa !important; }
+[data-theme="dark"] .diagram-box svg polygon[fill="#dc2626"] { fill: #f87171 !important; }
+[data-theme="dark"] .diagram-box svg polygon[fill="#047857"] { fill: #34d399 !important; }
+

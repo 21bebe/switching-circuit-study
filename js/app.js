@@ -457,7 +457,36 @@
     window.scrollTo({ top: 0, behavior: 'instant' });
   }
 
+  const THEME_KEY = 'switch_study_theme_v1';
+  const SUN_ICON = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>';
+  const MOON_ICON = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+
+  function syncThemeIcons() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    document.querySelectorAll('.theme-toggle-btn').forEach((btn) => {
+      btn.innerHTML = isDark ? SUN_ICON : MOON_ICON;
+      btn.setAttribute('aria-label', isDark ? 'ライトモードに切り替え' : 'ダークモードに切り替え');
+      btn.setAttribute('title', isDark ? 'ライトモードに切り替え' : 'ダークモードに切り替え');
+    });
+  }
+
+  function toggleTheme() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    if (isDark) {
+      document.documentElement.removeAttribute('data-theme');
+      try { localStorage.setItem(THEME_KEY, 'light'); } catch {}
+    } else {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      try { localStorage.setItem(THEME_KEY, 'dark'); } catch {}
+    }
+    syncThemeIcons();
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
+    syncThemeIcons();
+    document.querySelectorAll('.theme-toggle-btn').forEach((btn) => {
+      btn.addEventListener('click', toggleTheme);
+    });
     updateProgressUI();
     route();
     window.addEventListener('hashchange', route);
