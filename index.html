@@ -70,6 +70,10 @@
           <span class="nav-code">00</span>
           <span>学習トップ・試験範囲一覧</span>
         </a>
+        <a href="#basics" class="nav-item" data-route="basics">
+          <span class="nav-code">入門</span>
+          <span>基本の解き方まとめ（ゼロから）</span>
+        </a>
 
         <div class="nav-group-label">単元別まとめ（教科書＋講義）</div>
         <a href="#unit-1" class="nav-item" data-route="unit-1">
@@ -146,7 +150,29 @@
     </a>
   </nav>
 
+  <!-- Floating Quick Guide Button & Slide-in Reference Drawer -->
+  <button id="cheat-fab" class="cheat-fab" aria-label="基本の解き方を開く" title="問題を見ながら基本の解き方を確認">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+    <span>基本の解き方</span>
+  </button>
+
+  <aside id="cheat-drawer" class="cheat-drawer" aria-label="基本の解き方クイックリファレンス">
+    <div class="cheat-drawer-head">
+      <div>
+        <span class="tag tag-blue">予備知識ゼロOK</span>
+        <strong style="margin-left:6px;font-size:15px;">基本の解き方 虎の巻</strong>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <a href="#basics" id="cheat-open-page" class="btn btn-sm">全画面で見る</a>
+        <button id="cheat-close" class="icon-btn" aria-label="閉じる">✕</button>
+      </div>
+    </div>
+    <div id="cheat-tabs" class="cheat-tabs"></div>
+    <div id="cheat-body" class="cheat-body"></div>
+  </aside>
+
   <script defer src="js/diagrams.js"></script>
+  <script defer src="js/data-basics.js"></script>
   <script defer src="js/data-units.js"></script>
   <script defer src="js/data-exams.js"></script>
   <script defer src="js/data-textbook.js"></script>

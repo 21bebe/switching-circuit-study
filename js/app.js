@@ -76,6 +76,7 @@
         <h1>スイッチング回路理論 対策ラボ</h1>
         <p>教科書（3.5・4.3〜4.7・5.1・5.3〜5.4）・第1〜7回講義資料・演習課題・過去問（山田）を1つに統合。回路図・真理値表・論理式の対応と「なぜその回路が必要か」をスマホでもPCでも一気に確認できます。</p>
         <div class="hero-actions">
+          <a href="#basics" class="btn btn-ok">ゼロからの基本の解き方</a>
           <a href="#past-exam" class="btn btn-warn">過去問（山田）を解く</a>
           <a href="#textbook" class="btn btn-primary">教科書の問題まとめ（${S.TextbookProblems.length}問）</a>
           <a href="#trainers" class="btn">計算トレーナー</a>
@@ -227,6 +228,35 @@
     `;
 
     bindRevealAndChecks(mainEl);
+  }
+
+  /* ---------- Basics Guide Full Page (#basics) ---------- */
+  function renderBasicsPage(mainEl) {
+    const items = S.BasicsGuide;
+    const jumps = items.map((it) => `<button class="btn btn-sm" data-jump="${it.id}">${it.short}</button>`).join('');
+    const cards = items.map((it) => `
+      <article class="topic-card" id="sec-${it.id}">
+        <h2>${it.title}</h2>
+        ${it.html}
+      </article>
+    `).join('');
+
+    mainEl.innerHTML = `
+      <div class="page-header">
+        <div class="page-meta"><span class="tag tag-ok">予備知識ゼロOK</span><span class="tag tag-blue">全8レシピ</span></div>
+        <h1>基本の解き方まとめ（ゼロからわかる虎の巻）</h1>
+        <p>0と1の基本演算から、加法標準形・カルノー図・Q-M法・CLA・FF入力方程式・時間定数計算までを最短ルートで整理しました。どの問題ページからでも右下の<strong>「基本の解き方」</strong>ボタンで横に開いたまま見られます！</p>
+      </div>
+      <div class="trainer-controls" style="gap:6px;">${jumps}</div>
+      ${cards}
+    `;
+
+    mainEl.querySelectorAll('[data-jump]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const el = document.getElementById('sec-' + btn.dataset.jump);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
   }
 
   /* ---------- Textbook Problems View ---------- */
@@ -517,6 +547,12 @@
         results.push({ href: '#textbook', tag: `教科書 ${p.num}`, title: `${p.num}：${p.title}`, snippet: strip(p.question).slice(0, 120) + '…' });
       }
     });
+    S.BasicsGuide.forEach((b) => {
+      const text = `${b.title} ${strip(b.html)}`;
+      if (text.toLowerCase().includes(q)) {
+        results.push({ href: '#basics', tag: '基本の解き方', title: b.title, snippet: strip(b.html).slice(0, 120) + '…' });
+      }
+    });
     S.Flashcards.forEach((c) => {
       if (`${c.q} ${c.a} ${c.unit}`.toLowerCase().includes(q)) {
         results.push({ href: '#flashcards', tag: '暗記カード', title: c.q, snippet: c.a.slice(0, 110) + '…' });
@@ -562,6 +598,7 @@
     });
 
     if (hash === 'home' || hash === '') renderHome(mainEl);
+    else if (hash === 'basics') renderBasicsPage(mainEl);
     else if (hash.startsWith('unit-')) renderUnit(mainEl, hash);
     else if (hash === 'past-exam') renderPastExam(mainEl);
     else if (hash === 'textbook') renderTextbook(mainEl);
@@ -599,11 +636,52 @@
     syncThemeIcons();
   }
 
+  /* ---------- Quick Reference Slide-in Drawer ---------- */
+  let activeCheatIdx = 0;
+
+  function renderCheatDrawer() {
+    const tabsEl = document.getElementById('cheat-tabs');
+    const bodyEl = document.getElementById('cheat-body');
+    if (!tabsEl || !bodyEl || !S.BasicsGuide) return;
+
+    tabsEl.innerHTML = S.BasicsGuide.map((it, i) => `
+      <button class="cheat-tab-btn ${i === activeCheatIdx ? 'active' : ''}" data-cheat-idx="${i}">${it.short}</button>
+    `).join('');
+
+    const cur = S.BasicsGuide[activeCheatIdx];
+    bodyEl.innerHTML = `<h3>${cur.title}</h3>${cur.html}`;
+    bodyEl.scrollTop = 0;
+
+    tabsEl.querySelectorAll('[data-cheat-idx]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        activeCheatIdx = Number(btn.dataset.cheatIdx);
+        renderCheatDrawer();
+      });
+    });
+  }
+
+  function setCheatOpen(open) {
+    const drawer = document.getElementById('cheat-drawer');
+    if (!drawer) return;
+    drawer.classList.toggle('open', open);
+    document.body.classList.toggle('cheat-open', open);
+    if (open) renderCheatDrawer();
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     syncThemeIcons();
     document.querySelectorAll('.theme-toggle-btn').forEach((btn) => {
       btn.addEventListener('click', toggleTheme);
     });
+    const cheatFab = document.getElementById('cheat-fab');
+    const cheatClose = document.getElementById('cheat-close');
+    const cheatOpenPage = document.getElementById('cheat-open-page');
+    if (cheatFab) cheatFab.addEventListener('click', () => {
+      const isOpen = document.getElementById('cheat-drawer').classList.contains('open');
+      setCheatOpen(!isOpen);
+    });
+    if (cheatClose) cheatClose.addEventListener('click', () => setCheatOpen(false));
+    if (cheatOpenPage) cheatOpenPage.addEventListener('click', () => setCheatOpen(false));
     updateProgressUI();
     route();
     window.addEventListener('hashchange', route);
