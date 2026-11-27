@@ -397,11 +397,21 @@
     bindRevealAndChecks(mainEl);
   }
 
+  const openPanels = new Set();
+
   function bindRevealAndChecks(mainEl) {
+    // Restore previously opened hint/answer panels so scroll position stays exact
+    mainEl.querySelectorAll('.reveal-panel').forEach((p) => {
+      if (p.id && openPanels.has(p.id)) p.classList.add('open');
+    });
     mainEl.querySelectorAll('[data-toggle-panel]').forEach((btn) => {
       btn.addEventListener('click', () => {
         const panel = document.getElementById(btn.dataset.togglePanel);
-        if (panel) panel.classList.toggle('open');
+        if (panel) {
+          const isOpen = panel.classList.toggle('open');
+          if (isOpen) openPanels.add(panel.id);
+          else openPanels.delete(panel.id);
+        }
       });
     });
     mainEl.querySelectorAll('[data-check-id]').forEach((cb) => {
@@ -411,8 +421,14 @@
     });
     const expBtn = mainEl.querySelector('#expand-all-ans');
     const colBtn = mainEl.querySelector('#collapse-all-ans');
-    if (expBtn) expBtn.addEventListener('click', () => mainEl.querySelectorAll('.ans-panel').forEach((p) => p.classList.add('open')));
-    if (colBtn) colBtn.addEventListener('click', () => mainEl.querySelectorAll('.reveal-panel').forEach((p) => p.classList.remove('open')));
+    if (expBtn) expBtn.addEventListener('click', () => mainEl.querySelectorAll('.ans-panel').forEach((p) => {
+      p.classList.add('open');
+      if (p.id) openPanels.add(p.id);
+    }));
+    if (colBtn) colBtn.addEventListener('click', () => mainEl.querySelectorAll('.reveal-panel').forEach((p) => {
+      p.classList.remove('open');
+      if (p.id) openPanels.delete(p.id);
+    }));
   }
 
   /* ---------- Flashcards View ---------- */
@@ -577,14 +593,38 @@
     `;
   }
 
-  /* ---------- Routing & Mobile Nav ---------- */
+  /* ---------- Routing, Per-Page Scroll Memory & Mobile Nav ---------- */
+  const SCROLL_KEY = 'switch_study_scroll_v1';
+  let currentRoute = null;
+  let scrollPositions = (() => {
+    try { return JSON.parse(sessionStorage.getItem(SCROLL_KEY)) || {}; } catch { return {}; }
+  })();
+
+  function saveCurrentScroll() {
+    if (!currentRoute) return;
+    scrollPositions[currentRoute] = window.scrollY;
+    try { sessionStorage.setItem(SCROLL_KEY, JSON.stringify(scrollPositions)); } catch {}
+  }
+
+  let scrollTimer = null;
+  window.addEventListener('scroll', () => {
+    if (!currentRoute) return;
+    if (scrollTimer) return;
+    scrollTimer = requestAnimationFrame(() => {
+      scrollTimer = null;
+      saveCurrentScroll();
+    });
+  }, { passive: true });
+
   function closeSidebar() {
     document.getElementById('sidebar').classList.remove('open');
     document.getElementById('sidebar-backdrop').classList.remove('open');
   }
 
   function route() {
-    const hash = (location.hash || '#home').replace(/^#/, '');
+    saveCurrentScroll();
+    const hash = (location.hash || '#home').replace(/^#/, '') || 'home';
+    currentRoute = hash;
     const mainEl = document.getElementById('main-content');
 
     // Update active links
@@ -608,7 +648,10 @@
     else renderHome(mainEl);
 
     closeSidebar();
-    window.scrollTo({ top: 0, behavior: 'instant' });
+    const targetY = typeof scrollPositions[hash] === 'number' ? scrollPositions[hash] : 0;
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: targetY, behavior: 'instant' });
+    });
   }
 
   const THEME_KEY = 'switch_study_theme_v1';
