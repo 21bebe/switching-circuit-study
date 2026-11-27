@@ -356,6 +356,8 @@ window.SwitchStudy = window.SwitchStudy || {};
           Z<sub>1</sub> = ${ov('A')}${ov('B')} + AB = ${ov('A ⊕ B')} = <strong>${ov('A' + ov('B') + ' + ' + ov('A') + 'B')}</strong> = ${ov('Z<sub>0</sub> + Z<sub>2</sub>')}
         </div>
         <p>※ NOT×2、AND×2（Z<sub>0</sub>, Z<sub>2</sub> 用）、NOR×1（Z<sub>0</sub> と Z<sub>2</sub> を入力して Z<sub>1</sub> を作る）の計5ゲートで構成できる。</p>
+        <h4>Step 3：回路図（教科書 図4.17）</h4>
+        <div class="diagram-box">${D.comparator1()}</div>
       `
     },
     {
@@ -420,6 +422,8 @@ window.SwitchStudy = window.SwitchStudy || {};
         <h4>Step 2：カルノー図でドントケアを活用して簡単化</h4>
         <p>Z<sub>0</sub>=1 は I<sub>1</sub>=1 または I<sub>3</sub>=1 のとき、Z<sub>1</sub>=1 は I<sub>2</sub>=1 または I<sub>3</sub>=1 のとき。</p>
         <div class="formula-block"><strong>Z<sub>0</sub> = I<sub>1</sub> + I<sub>3</sub>　　Z<sub>1</sub> = I<sub>2</sub> + I<sub>3</sub></strong>（I<sub>0</sub> は回路に未接続）</div>
+        <h4>Step 3：回路図（教科書 図4.21）</h4>
+        <div class="diagram-box">${D.encoder2()}</div>
         <p>※ 弱点：I<sub>1</sub> と I<sub>2</sub> が同時に 1 になると Z<sub>1</sub>=1, Z<sub>0</sub>=1（I<sub>3</sub> の符号）になって誤動作する → 解決策がプライオリティエンコーダ！</p>
       `
     },
@@ -456,6 +460,8 @@ window.SwitchStudy = window.SwitchStudy || {};
           <strong>④ GS（いずれかの入力が1かつイネーブル有効）：</strong><br>
           GS = <strong>(I<sub>7</sub> + I<sub>6</sub> + I<sub>5</sub> + I<sub>4</sub> + I<sub>3</sub> + I<sub>2</sub> + I<sub>1</sub> + I<sub>0</sub>) · EI</strong>
         </div>
+        <h4>Step 3：回路構成（教科書 図4.22）</h4>
+        <div class="diagram-box">${D.priorityEncoder8()}</div>
       `
     },
     {
@@ -480,8 +486,9 @@ window.SwitchStudy = window.SwitchStudy || {};
             <tr><td class="mono-cell">1</td><td class="mono-cell">1</td><td class="mono-cell col-sep">0</td><td class="mono-cell">0</td><td class="mono-cell">0</td><td class="mono-cell hi-1">1</td></tr>
           </tbody>
         </table></div>
-        <h4>Step 2：論理式と回路構成</h4>
+        <h4>Step 2：論理式と回路構成（教科書 図4.23）</h4>
         <div class="formula-block"><strong>Z<sub>0</sub> = ${ov('B')}${ov('A')},　Z<sub>1</sub> = ${ov('B')}A,　Z<sub>2</sub> = B${ov('A')},　Z<sub>3</sub> = BA</strong></div>
+        <div class="diagram-box">${D.decoder2()}</div>
         <p>NOTゲート2個（${ov('A')}, ${ov('B')} を生成）と2入力ANDゲート4個で構成。</p>
       `
     },
@@ -520,6 +527,8 @@ window.SwitchStudy = window.SwitchStudy || {};
           Z<sub>4</sub> = C${ov('B')}${ov('A')}　　Z<sub>5</sub> = C${ov('B')}A　　Z<sub>6</sub> = CB${ov('A')}　　Z<sub>7</sub> = CBA<br>
           Z<sub>8</sub> = D${ov('A')}　　Z<sub>9</sub> = DA
         </div>
+        <h4>Step 3：回路構成（教科書 図4.25）</h4>
+        <div class="diagram-box">${D.bcdDecoder()}</div>
       `
     },
     {
@@ -573,8 +582,9 @@ window.SwitchStudy = window.SwitchStudy || {};
             <tr><td class="mono-cell">0</td><td class="mono-cell">1</td><td class="mono-cell">1</td><td class="mono-cell hi-1">d<sub>3</sub></td><td class="mono-cell hi-x">×</td><td class="mono-cell hi-x">×</td><td class="mono-cell hi-x">×</td><td class="mono-cell col-sep hi-1">d<sub>3</sub></td></tr>
           </tbody>
         </table></div>
-        <h4>Step 2：論理式とゲート構成</h4>
+        <h4>Step 2：論理式とゲート構成（教科書 図4.29）</h4>
         <div class="formula-block"><strong>Z = (A${ov('S<sub>1</sub>')}${ov('S<sub>0</sub>')} + B${ov('S<sub>1</sub>')}S<sub>0</sub> + CS<sub>1</sub>${ov('S<sub>0</sub>')} + DS<sub>1</sub>S<sub>0</sub>) · EI</strong></div>
+        <div class="diagram-box">${D.mux4Gate()}</div>
         <p>回路構成：NOT×3（${ov('EI')}, S<sub>1</sub>, S<sub>0</sub> 用）、4入力AND×4（各チャネル選択）、4入力OR×1（出力統合）。</p>
       `
     },
@@ -599,8 +609,9 @@ window.SwitchStudy = window.SwitchStudy || {};
             <tr><td class="mono-cell">0</td><td class="mono-cell hi-1">1</td><td class="mono-cell hi-x">×</td><td class="mono-cell hi-1">d<sub>0i</sub></td><td class="mono-cell col-sep hi-1">d<sub>0i</sub></td></tr>
           </tbody>
         </table></div>
-        <h4>Step 2：論理式と回路構成</h4>
+        <h4>Step 2：論理式と回路構成（教科書 図4.30）</h4>
         <div class="formula-block"><strong>Z<sub>i</sub> = (A<sub>i</sub>·S + B<sub>i</sub>·${ov('S')}) · EI　　（i = 0, 1, 2, 3）</strong></div>
+        <div class="diagram-box">${D.mux4bit2ch()}</div>
         <p>回路構成：各ビットごとに 3入力AND×2 ＋ 2入力OR×1 を配置（計 AND 8個＋OR 4個）。制御線 EI, S, ${ov('S')} は全4ビットで共通配線する。</p>
       `
     },
@@ -627,11 +638,12 @@ window.SwitchStudy = window.SwitchStudy || {};
             <tr><td class="mono-cell">0</td><td class="mono-cell">1</td><td class="mono-cell">1</td><td class="mono-cell">d<sub>i</sub></td><td class="mono-cell col-sep hi-1">d<sub>i</sub></td><td class="mono-cell">0</td><td class="mono-cell">0</td><td class="mono-cell">0</td></tr>
           </tbody>
         </table></div>
-        <h4>Step 2：論理式とゲート構成（計8本の出力）</h4>
+        <h4>Step 2：論理式とゲート構成（教科書 図4.31・計8本の出力）</h4>
         <div class="formula-block">
           ch.0：Z<sub>0i</sub> = D<sub>i</sub>·${ov('S<sub>1</sub>')}${ov('S<sub>0</sub>')}·EI　　ch.1：Z<sub>1i</sub> = D<sub>i</sub>·${ov('S<sub>1</sub>')}S<sub>0</sub>·EI<br>
           ch.2：Z<sub>2i</sub> = D<sub>i</sub>·S<sub>1</sub>${ov('S<sub>0</sub>')}·EI　　ch.3：Z<sub>3i</sub> = D<sub>i</sub>·S<sub>1</sub>S<sub>0</sub>·EI　（i = 0, 1）
         </div>
+        <div class="diagram-box">${D.demux2bit4ch()}</div>
         <p>回路構成：NOT×3（${ov('EI')}, S<sub>1</sub>, S<sub>0</sub> 用）＋ 4入力ANDゲート <strong>8個</strong>（2ビット×4チャネル）。</p>
       `
     },
@@ -660,11 +672,12 @@ window.SwitchStudy = window.SwitchStudy || {};
           &nbsp;&nbsp;&nbsp;= C<sup>-</sup>P<sub>0</sub>P<sub>1</sub> + G<sub>0</sub>P<sub>1</sub> + G<sub>1</sub>　← 分配法則で展開<br>
           &nbsp;&nbsp;&nbsp;= <strong>C<sup>-</sup>(A<sub>0</sub> ⊕ B<sub>0</sub>)(A<sub>1</sub> ⊕ B<sub>1</sub>) + A<sub>0</sub>B<sub>0</sub>(A<sub>1</sub> ⊕ B<sub>1</sub>) + A<sub>1</sub>B<sub>1</sub></strong>
         </div>
-        <h4>Step 3：各桁の和 S<sub>0</sub>, S<sub>1</sub></h4>
+        <h4>Step 3：各桁の和 S<sub>0</sub>, S<sub>1</sub> と回路構成</h4>
         <div class="formula-block">
           S<sub>0</sub> = C<sup>-</sup> ⊕ P<sub>0</sub> = <strong>C<sup>-</sup> ⊕ (A<sub>0</sub> ⊕ B<sub>0</sub>)</strong><br>
           S<sub>1</sub> = C<sub>0</sub> ⊕ P<sub>1</sub> = <strong>C<sub>0</sub> ⊕ (A<sub>1</sub> ⊕ B<sub>1</sub>)</strong>
         </div>
+        <div class="diagram-box">${D.cla2bit()}</div>
       `
     },
     {
@@ -694,6 +707,8 @@ window.SwitchStudy = window.SwitchStudy || {};
           Z<sub>2</sub> = ${ov('A<sub>1</sub>')}B<sub>1</sub> + (A<sub>1</sub>B<sub>1</sub> + ${ov('A<sub>1</sub>')}${ov('B<sub>1</sub>')})${ov('A<sub>0</sub>')}B<sub>0</sub> = <strong>Z<sub>12</sub> + Z<sub>11</sub>Z<sub>02</sub></strong>
         </div>
         <p>例題 4.8（1ビット比較器2個の組合せ）と完全に一致することが確認できる！</p>
+        <h4>Step 3：回路図（教科書 図4.18 と同一）</h4>
+        <div class="diagram-box">${D.comparator2()}</div>
       `
     },
     {
@@ -733,6 +748,8 @@ window.SwitchStudy = window.SwitchStudy || {};
           G<sub>0</sub> = ${ov('B')}A + B${ov('A')} = <strong>A ⊕ B</strong>
         </div>
         <p style="font-size:13px;color:var(--ink-secondary)">※ 通常の4ビット2進符号（0〜15すべて有効）なら G<sub>2</sub> = D ⊕ C（XOR×3）。BCD限定なら OR×1 ＋ XOR×2 で作れるのがポイント！</p>
+        <h4>Step 3：回路図（OR×1 ＋ XOR×2）</h4>
+        <div class="diagram-box">${D.bcdToGray4()}</div>
       `
     },
     {
@@ -762,6 +779,8 @@ window.SwitchStudy = window.SwitchStudy || {};
         <h4>Step 3：手計算での検算例（グレイ 1101 → 2進 1001 = 9）</h4>
         <p class="mono" style="font-size:13.5px;">B<sub>3</sub>=1 → B<sub>2</sub>=1⊕1=0 → B<sub>1</sub>=0⊕0=0 → B<sub>0</sub>=0⊕1=1 ⇒ (1001)<sub>2</sub> = 9（OK！）</p>
         <p>回路構成：2入力XORゲート3個を上位から下位へ直列（カスケード）に接続する。</p>
+        <h4>Step 4：回路図（XOR×3 カスケード）</h4>
+        <div class="diagram-box">${D.grayToBin4()}</div>
       `
     },
     {
@@ -789,6 +808,9 @@ window.SwitchStudy = window.SwitchStudy || {};
           ch.2：Z<sub>2i</sub> = D<sub>i</sub>S<sub>1</sub>${ov('S<sub>0</sub>')}EI　　ch.3：Z<sub>3i</sub> = D<sub>i</sub>S<sub>1</sub>S<sub>0</sub>EI
         </div>
         <p>必要ゲート数：NOT×3（共通）＋ 4入力AND×32個（4ch×8bit、出力線32本）。</p>
+        <h4>Step 4：基本単位回路（1ビット分×8並列）</h4>
+        <div class="diagram-box">${D.mux4Gate()}<div class="diagram-caption">MUX 1ビット分（これを i=0〜7 の8組並列配置）</div></div>
+        <div class="diagram-box">${D.demux2bit4ch()}<div class="diagram-caption">DEMUX 構成イメージ（D1,D0 を D7〜D0 の8ビットへ拡張）</div></div>
       `
     },
 
@@ -865,6 +887,8 @@ window.SwitchStudy = window.SwitchStudy || {};
           Q<sup>+</sup> = <strong>${ov('R + ' + ov('S + Q'))}</strong>
         </div>
         <p>※ たすき掛けの2入力NOR×2（正論理入力 S, R：1で動作）となる。</p>
+        <h4>3. 回路図（教科書 図5.6）</h4>
+        <div class="diagram-box">${D.srLatchNandNor()}</div>
       `
     },
     {
@@ -992,6 +1016,8 @@ window.SwitchStudy = window.SwitchStudy || {};
           R = ${ov('g<sub>1</sub>')}Q = ${ov(ov('T'))}Q = <strong>TQ</strong>
         </div>
         <p><strong>動作検算：</strong>T=0 なら S=R=0（保持）。T=1 のとき、Q=0 なら S=1, R=0（1へ反転）、Q=1 なら S=0, R=1（0へ反転）。常に SR=0 も満たす！</p>
+        <h4>Step 4：回路図（教科書 図5.9）</h4>
+        <div class="diagram-box">${D.srToT()}</div>
       `
     },
     {
@@ -1017,6 +1043,8 @@ window.SwitchStudy = window.SwitchStudy || {};
           R = ${ov('g<sub>1</sub>')}Q = ${ov(ov('K'))}Q = <strong>KQ</strong>
         </div>
         <p><strong>ポイント：</strong>J=K=1 のときでも、Q と ${ov('Q')} は同時に1にならないため、SR-FF 側には必ず片方しか1が入らず（SR=0）、安全に反転動作する（ただしクロック付きでは発振防止にエッジトリガ等が必要）。</p>
+        <h4>Step 3：回路図（教科書 図5.12）</h4>
+        <div class="diagram-box">${D.srToJK()}</div>
       `
     },
     {
@@ -1042,6 +1070,7 @@ window.SwitchStudy = window.SwitchStudy || {};
           <li><strong>(a) 式のまま構成：</strong>J と K を束ねて入力 T を入れ、クロックは Cp へ入力（T=1のクロック時のみ反転）。</li>
           <li><strong>(b) 実用回路（カウンタ用）：</strong><strong>J = 1, K = 1 に固定</strong>し、入力 T（パルス）を負エッジトリガの <strong>Cp 端子</strong>へ入力する（T が立ち下がるたびに必ず出力が反転）。</li>
         </ul>
+        <div class="diagram-box">${D.jkToT()}</div>
       `
     },
     {
@@ -1106,6 +1135,8 @@ window.SwitchStudy = window.SwitchStudy || {};
         </ul>
         <p>× に S=1（D=1,Q=1）と R=1（D=0,Q=0）を割り当てれば Q が消えて、NOTゲート1個だけの最簡形になる！</p>
         <div class="formula-block"><strong>解答： S = D,　　R = ${ov('D')}</strong>（代入そのままの S=D${ov('Q')}, R=${ov('D')}Q でも動作は同一）</div>
+        <h4>Step 3：回路図（教科書 図5.19）</h4>
+        <div class="diagram-box">${D.srToD()}</div>
       `
     },
     {
@@ -1127,6 +1158,8 @@ window.SwitchStudy = window.SwitchStudy || {};
           <strong>J = D,　　K = ${ov('D')}</strong>
         </div>
         <p><strong>動作検算：</strong>D=0 のとき J=0, K=1（リセット→0）、D=1 のとき J=1, K=0（セット→1）。NOTゲート1個を K 側に入れるだけで完成！</p>
+        <h4>Step 2：回路図</h4>
+        <div class="diagram-box">${D.jkToD()}</div>
       `
     },
     {
@@ -1152,6 +1185,7 @@ window.SwitchStudy = window.SwitchStudy || {};
           <li>T 入力付き T-FF：T と現在出力 Q を <strong>XORゲート</strong> に入れて D 入力へつなぐ。</li>
           <li>T = 1 固定（2進カウンタ）：<span class="formula">D = 1 ⊕ Q = ${ov('Q')}</span> となるため、<strong>反転出力 ${ov('Q')} をそのまま D 入力へ直結</strong>するだけで1ビット2進カウンタが完成する！（第7回講義の時間定数問題でも頻出！）</li>
         </ul>
+        <div class="diagram-box">${D.dToT()}</div>
       `
     }
   ];

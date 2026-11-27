@@ -287,6 +287,7 @@ window.SwitchStudy.Exercises = [
         Z<sub>1</sub> = Z<sub>21</sub>Z<sub>11</sub>Z<sub>01</sub><br>
         Z<sub>2</sub> = Z<sub>22</sub> + Z<sub>21</sub>Z<sub>12</sub> + Z<sub>21</sub>Z<sub>11</sub>Z<sub>02</sub>
       </div>
+      <div class="diagram-box">${window.SwitchStudy.Diagrams.comparator3()}</div>
     `
   },
   {
@@ -325,6 +326,7 @@ window.SwitchStudy.Exercises = [
         Z<sub>0i</sub> = D<sub>i</sub> · ${_ov('S')} · EI<br>
         Z<sub>1i</sub> = D<sub>i</sub> · S · EI
       </div>
+      <div class="diagram-box">${window.SwitchStudy.Diagrams.demux4bit2ch()}</div>
     `
   },
   {
@@ -342,6 +344,7 @@ window.SwitchStudy.Exercises = [
       <p>T-FFの特性方程式より <span class="formula">g<sub>1</sub> = ${_ov('T')}, g<sub>2</sub> = T</span>。これを D-FF の入力方程式に代入すると：</p>
       <div class="formula-block">D = ${_ov('T')}Q + T${_ov('Q')} = T ⊕ Q</div>
       <p>よって、T と現在出力 Q の XOR を D 入力へつなぐ。特に T=1 に固定する場合は <strong><span class="formula">D = ${_ov('Q')}</span></strong>（反転出力をそのままDに帰還するだけ！）で1ビット2進カウンタになる。</p>
+      <div class="diagram-box">${window.SwitchStudy.Diagrams.dToT()}</div>
     `
   },
   {
