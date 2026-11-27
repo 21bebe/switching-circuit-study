@@ -77,8 +77,9 @@
         <p>教科書（3.5・4.3〜4.7・5.1・5.3〜5.4）・第1〜7回講義資料・演習課題・過去問（山田）を1つに統合。回路図・真理値表・論理式の対応と「なぜその回路が必要か」をスマホでもPCでも一気に確認できます。</p>
         <div class="hero-actions">
           <a href="#past-exam" class="btn btn-warn">過去問（山田）を解く</a>
-          <a href="#trainers" class="btn btn-primary">計算トレーナーを使う</a>
-          <a href="#flashcards" class="btn">記述フラッシュカード（${S.Flashcards.length}問）</a>
+          <a href="#textbook" class="btn btn-primary">教科書の問題まとめ（${S.TextbookProblems.length}問）</a>
+          <a href="#trainers" class="btn">計算トレーナー</a>
+          <a href="#flashcards" class="btn">暗記カード（${S.Flashcards.length}問）</a>
         </div>
       </section>
 
@@ -97,6 +98,13 @@
             <span class="tag tag-warn">過去問</span>
             <h3>中間試験（山田）全6問</h3>
             <p>実答案で減点された冗長主項の罠も含め、ヒント→模範解答→SVG回路図で完全攻略。</p>
+          </div>
+        </a>
+        <a href="#textbook" class="card-link">
+          <div>
+            <span class="tag tag-blue">教科書問題</span>
+            <h3>教科書の例題・演習（全${S.TextbookProblems.length}問）</h3>
+            <p>第3章〜第5章の試験範囲に載っている例題・演習問題を章別フィルター＆解答トグル付きで完全網羅。</p>
           </div>
         </a>
         <a href="#exercises" class="card-link">
@@ -219,6 +227,108 @@
     `;
 
     bindRevealAndChecks(mainEl);
+  }
+
+  /* ---------- Textbook Problems View ---------- */
+  const tbState = { chapter: 'all', kind: 'all' };
+
+  function renderTextbook(mainEl) {
+    const all = S.TextbookProblems;
+    const chCounts = {
+      3: all.filter((p) => p.chapter === 3).length,
+      4: all.filter((p) => p.chapter === 4).length,
+      5: all.filter((p) => p.chapter === 5).length
+    };
+    const doneTotal = all.filter((p) => progress.checks['done-' + p.id]).length;
+
+    const filtered = all.filter((p) => {
+      if (tbState.chapter !== 'all' && String(p.chapter) !== tbState.chapter) return false;
+      if (tbState.kind === 'example' && p.type !== 'example') return false;
+      if (tbState.kind === 'exercise' && p.type !== 'exercise') return false;
+      if (tbState.kind === 'todo' && progress.checks['done-' + p.id]) return false;
+      return true;
+    });
+
+    const probsHtml = filtered.length
+      ? filtered.map((p) => {
+          const done = !!progress.checks['done-' + p.id];
+          return `
+            <section class="exam-problem">
+              <div class="exam-problem-head">
+                <div>
+                  <span class="tag ${p.type === 'example' ? 'tag-blue' : 'tag-warn'}">${p.num}</span>
+                  <span class="tag">第${p.chapter}章 ${p.page}</span>
+                  <a href="${p.unitLink}" class="tag">${p.unitLabel}</a>
+                </div>
+                <label style="display:inline-flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;font-weight:700;color:${done ? 'var(--ok)' : 'var(--ink-muted)'};">
+                  <input type="checkbox" data-check-id="done-${p.id}" ${done ? 'checked' : ''} style="width:16px;height:16px;accent-color:var(--ok);">
+                  自力で解けた！
+                </label>
+              </div>
+              <h2 style="margin:6px 0 12px;font-size:17px;">${p.title}</h2>
+              <div class="exam-q-box">${p.question}</div>
+              <div class="reveal-controls">
+                <button class="btn btn-sm" data-toggle-panel="hint-${p.id}">ヒントを見る</button>
+                <button class="btn btn-sm btn-primary" data-toggle-panel="ans-${p.id}">解答・解説を表示</button>
+              </div>
+              <div id="hint-${p.id}" class="reveal-panel hint-panel">${p.hint}</div>
+              <div id="ans-${p.id}" class="reveal-panel ans-panel">${p.answer}</div>
+            </section>
+          `;
+        }).join('')
+      : '<div class="callout callout-ok"><div class="callout-title">該当する問題はありません</div>フィルターを切り替えて他の問題を確認してください。</div>';
+
+    mainEl.innerHTML = `
+      <div class="page-header">
+        <div class="page-meta">
+          <span class="tag tag-blue">浜辺隆二『論理回路入門』</span>
+          <span class="tag tag-ok">解けた ${doneTotal} / ${all.length} 問</span>
+        </div>
+        <h1>教科書の例題・演習問題まとめ</h1>
+        <p>中間試験範囲（3.5・4.3〜4.7・5.1・5.3〜5.4）に登場する教科書の例題と演習問題をすべて収録。ヒント→解答の順で自力演習できます。</p>
+      </div>
+
+      <div class="tabs" style="margin-bottom:12px;">
+        <button class="tab-btn ${tbState.chapter === 'all' ? 'active' : ''}" data-tb-ch="all">すべて (${all.length})</button>
+        <button class="tab-btn ${tbState.chapter === '3' ? 'active' : ''}" data-tb-ch="3">第3章 Q-M法 (${chCounts[3]})</button>
+        <button class="tab-btn ${tbState.chapter === '4' ? 'active' : ''}" data-tb-ch="4">第4章 演算・組合せ (${chCounts[4]})</button>
+        <button class="tab-btn ${tbState.chapter === '5' ? 'active' : ''}" data-tb-ch="5">第5章 順序回路・FF (${chCounts[5]})</button>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="btn btn-sm ${tbState.kind === 'all' ? 'btn-primary' : ''}" data-tb-kind="all">全種別</button>
+          <button class="btn btn-sm ${tbState.kind === 'example' ? 'btn-primary' : ''}" data-tb-kind="example">例題のみ</button>
+          <button class="btn btn-sm ${tbState.kind === 'exercise' ? 'btn-warn' : ''}" data-tb-kind="exercise">演習問題のみ</button>
+          <button class="btn btn-sm ${tbState.kind === 'todo' ? 'btn-ok' : ''}" data-tb-kind="todo">未チェックのみ</button>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="btn btn-sm" id="expand-all-ans">すべての解答を開く</button>
+          <button class="btn btn-sm" id="collapse-all-ans">すべて閉じる</button>
+        </div>
+      </div>
+
+      ${probsHtml}
+    `;
+
+    bindRevealAndChecks(mainEl);
+    mainEl.querySelectorAll('[data-tb-ch]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        tbState.chapter = btn.dataset.tbCh;
+        renderTextbook(mainEl);
+      });
+    });
+    mainEl.querySelectorAll('[data-tb-kind]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        tbState.kind = btn.dataset.tbKind;
+        renderTextbook(mainEl);
+      });
+    });
+    mainEl.querySelectorAll('[data-check-id]').forEach((cb) => {
+      cb.addEventListener('change', () => {
+        if (tbState.kind === 'todo') renderTextbook(mainEl);
+      });
+    });
   }
 
   function renderExercises(mainEl) {
@@ -401,6 +511,12 @@
         results.push({ href: '#past-exam', tag: `過去問 ${p.num}`, title: `${p.num}（${p.unitLabel}）`, snippet: strip(p.question).slice(0, 120) + '…' });
       }
     });
+    S.TextbookProblems.forEach((p) => {
+      const text = `${p.num} ${p.title} ${p.unitLabel} ${strip(p.question)} ${strip(p.answer)}`;
+      if (text.toLowerCase().includes(q)) {
+        results.push({ href: '#textbook', tag: `教科書 ${p.num}`, title: `${p.num}：${p.title}`, snippet: strip(p.question).slice(0, 120) + '…' });
+      }
+    });
     S.Flashcards.forEach((c) => {
       if (`${c.q} ${c.a} ${c.unit}`.toLowerCase().includes(q)) {
         results.push({ href: '#flashcards', tag: '暗記カード', title: c.q, snippet: c.a.slice(0, 110) + '…' });
@@ -448,6 +564,7 @@
     if (hash === 'home' || hash === '') renderHome(mainEl);
     else if (hash.startsWith('unit-')) renderUnit(mainEl, hash);
     else if (hash === 'past-exam') renderPastExam(mainEl);
+    else if (hash === 'textbook') renderTextbook(mainEl);
     else if (hash === 'exercises') renderExercises(mainEl);
     else if (hash === 'trainers') S.Trainers.render(mainEl);
     else if (hash === 'flashcards') renderFlashcards(mainEl);
