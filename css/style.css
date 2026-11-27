@@ -864,6 +864,18 @@ table.logic-table .hi-ess {
   border-left: 4px solid var(--ok);
 }
 
+.reveal-panel h4 {
+  margin: 16px 0 6px;
+  font-size: 14.5px;
+  color: var(--accent);
+  border-bottom: 1px dashed var(--border-strong);
+  padding-bottom: 3px;
+}
+
+.reveal-panel h4:first-child {
+  margin-top: 2px;
+}
+
 /* =========================================================
    Interactive Trainers & Tabs
    ========================================================= */
