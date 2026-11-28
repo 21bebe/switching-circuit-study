@@ -25,6 +25,9 @@
     const ids = [];
     S.Units.forEach((u) => u.checkpoints.forEach((c) => ids.push(c.id)));
     S.PastExam.problems.forEach((p) => ids.push('done-' + p.id));
+    if (S.ExamFocus && S.ExamFocus.focuses) {
+      S.ExamFocus.focuses.forEach((f) => ids.push('done-' + f.problem.id));
+    }
     return ids;
   }
 
@@ -76,17 +79,21 @@
         <h1>スイッチング回路理論 対策ラボ</h1>
         <p>教科書（3.5・4.3〜4.7・5.1・5.3〜5.4）・第1〜7回講義資料・演習課題・過去問（山田）を1つに統合。回路図・真理値表・論理式の対応と「なぜその回路が必要か」をスマホでもPCでも一気に確認できます。</p>
         <div class="hero-actions">
+          <a href="#focus" class="btn btn-warn">★ 重大出題フォーカス総まとめ</a>
           <a href="#basics" class="btn btn-ok">ゼロからの基本の解き方</a>
-          <a href="#past-exam" class="btn btn-warn">過去問（山田）を解く</a>
-          <a href="#textbook" class="btn btn-primary">教科書の問題まとめ（${S.TextbookProblems.length}問）</a>
+          <a href="#past-exam" class="btn btn-primary">過去問（山田）を解く</a>
+          <a href="#textbook" class="btn">教科書の問題まとめ（${S.TextbookProblems.length}問）</a>
           <a href="#trainers" class="btn">計算トレーナー</a>
           <a href="#flashcards" class="btn">暗記カード（${S.Flashcards.length}問）</a>
         </div>
       </section>
 
       <div class="callout callout-exam">
-        <div class="callout-title">特に重要な出題フォーカス（自力で解けるように！）</div>
-        Q-M法による簡単化 ／ ドントケア項を利用した簡単化 ／ 多ビット比較器 ／ 桁上げ先見加算器（CLA）／ オーバーフロー検出器 ／ エンコーダ・デコーダ ／ マルチプレクサ・デマルチプレクサ ／ 入力方程式の導出 ／ 非同期式カウンタ
+        <div class="callout-title" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+          <span>特に重要な出題フォーカス（自力で解けるように！）</span>
+          <a href="#focus" class="btn btn-sm btn-warn">要点＋厳選問題まとめを開く →</a>
+        </div>
+        Q-M法による簡単化 ／ ドントケア項を利用した簡単化 ／ 多ビット比較器 ／ 桁上げ先見加算器（CLA）／ オーバーフロー検出器 ／ エンコーダ・デコーダ ／ マルチプレクサ・デマルチプレクサ ／ 入力方程式の導出 ／ 非同期式カウンタ ／ FFの時間定数
       </div>
 
       <h2 class="section-title">単元別まとめ（全6単元）</h2>
@@ -255,6 +262,187 @@
       btn.addEventListener('click', () => {
         const el = document.getElementById('sec-' + btn.dataset.jump);
         if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  }
+
+  /* ---------- Critical Exam Focus View (#focus) ---------- */
+  const focusState = { cat: 'all' };
+
+  function renderFocus(mainEl) {
+    const ef = S.ExamFocus;
+    if (!ef) return renderHome(mainEl);
+
+    const all = ef.focuses;
+    const doneCount = all.filter((f) => progress.checks['done-' + f.problem.id]).length;
+    const counts = {
+      simplify: all.filter((f) => f.category === 'simplify').length,
+      arith: all.filter((f) => f.category === 'arith').length,
+      comb: all.filter((f) => f.category === 'comb').length,
+      seq: all.filter((f) => f.category === 'seq').length
+    };
+
+    const filtered = all.filter((f) => {
+      if (focusState.cat === 'all') return true;
+      if (focusState.cat === 'todo') return !progress.checks['done-' + f.problem.id];
+      return f.category === focusState.cat;
+    });
+
+    const jumpChipsHtml = all.map((f) => {
+      const done = !!progress.checks['done-' + f.problem.id];
+      return `
+        <button class="focus-jump-chip ${done ? 'is-done' : ''}" data-focus-jump="${f.id}">
+          <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${f.title}</span>
+          <span class="focus-jump-num">${done ? '✓' : f.num.replace('FOCUS ', '#')}</span>
+        </button>
+      `;
+    }).join('');
+
+    const pillarsHtml = ef.designPrinciples.map((p) => `
+      <div class="focus-pillar-card">
+        <div class="focus-pillar-num">考え方 ${p.num}</div>
+        <h3>${p.title}</h3>
+        <p>${p.desc}</p>
+      </div>
+    `).join('');
+
+    const cardsHtml = filtered.length
+      ? filtered.map((f) => {
+          const p = f.problem;
+          const done = !!progress.checks['done-' + p.id];
+          const lpHtml = f.learningPoints.map((lp) => {
+            const checked = !!progress.checks[lp.id];
+            return `
+              <label class="checklist-item ${checked ? 'checked' : ''}">
+                <input type="checkbox" data-check-id="${lp.id}" ${checked ? 'checked' : ''}>
+                <span>${lp.text}</span>
+              </label>
+            `;
+          }).join('');
+
+          return `
+            <section class="focus-card ${done ? 'is-done' : ''}" id="${f.id}">
+              <div class="focus-card-head">
+                <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;">
+                  <span class="tag tag-warn">${f.num}</span>
+                  <span class="tag tag-blue">${f.categoryLabel}</span>
+                  <span class="tag">${f.sectionRef}</span>
+                  <span class="tag tag-warn">${f.priority}</span>
+                </div>
+                <a href="${f.unitLink}" class="btn btn-sm">詳細まとめ（${f.unitLabel}）→</a>
+              </div>
+
+              <h2 class="focus-card-title">${f.title}</h2>
+
+              <div class="focus-why-box">
+                <div class="focus-why-label">なぜこの回路・手法が必要か？／特徴（記述対策）</div>
+                <div>${f.whyNeeded}</div>
+              </div>
+
+              <div class="focus-subhead">回路図・真理値表・論理式の対応と要点</div>
+              <div>${f.keyPointsHtml}</div>
+
+              <div class="focus-subhead">このテーマの学習ポイント（チェックリスト）</div>
+              <div class="checklist">${lpHtml}</div>
+
+              <div class="focus-problem-box">
+                <div class="exam-problem-head" style="margin-bottom:8px;">
+                  <div>
+                    <span class="tag tag-blue">自力演習</span>
+                    <span class="tag">${p.badge}</span>
+                  </div>
+                  <label style="display:inline-flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;font-weight:700;color:${done ? 'var(--ok)' : 'var(--ink-muted)'};">
+                    <input type="checkbox" data-check-id="done-${p.id}" ${done ? 'checked' : ''} style="width:16px;height:16px;accent-color:var(--ok);">
+                    自力で解けた！
+                  </label>
+                </div>
+                <h3 style="margin:4px 0 10px;font-size:16px;">${p.title}</h3>
+                <div class="exam-q-box" style="background:var(--bg-surface);">${p.question}</div>
+                <div class="reveal-controls">
+                  <button class="btn btn-sm" data-toggle-panel="hint-${p.id}">ヒントを見る</button>
+                  <button class="btn btn-sm btn-primary" data-toggle-panel="ans-${p.id}">解答・解説を表示</button>
+                </div>
+                <div id="hint-${p.id}" class="reveal-panel hint-panel"><strong>解法のヒント：</strong>${p.hint}</div>
+                <div id="ans-${p.id}" class="reveal-panel ans-panel">${p.answer}</div>
+              </div>
+            </section>
+          `;
+        }).join('')
+      : '<div class="callout callout-ok"><div class="callout-title">すべての重点演習をクリアしました！</div>「すべて」タブで全10テーマを最終確認するか、<a href="#past-exam">過去問（山田）</a>で実戦チェックしましょう。</div>';
+
+    mainEl.innerHTML = `
+      <div class="page-header">
+        <div class="page-meta">
+          <span class="tag tag-warn">中間試験・重大出題フォーカス</span>
+          <span class="tag">${ef.meta.rules}</span>
+          <span class="tag tag-ok">演習クリア ${doneCount} / ${all.length}</span>
+        </div>
+        <h1>${ef.meta.title}</h1>
+        <p>${ef.meta.subtitle}</p>
+      </div>
+
+      <details class="focus-collapsible">
+        <summary>電卓持込不可！手計算サバイバル早見表（4種FF方程式・時間定数不等式・暗算テク）</summary>
+        ${ef.cheatSheetHtml}
+      </details>
+
+      <details class="focus-collapsible">
+        <summary>回路設計の考え方 6つの柱（記述問題・理由説明のベース）</summary>
+        <div class="focus-pillar-grid">${pillarsHtml}</div>
+      </details>
+
+      <div class="focus-summary-bar">
+        <div class="tabs" style="margin:0;">
+          <button class="tab-btn ${focusState.cat === 'all' ? 'active' : ''}" data-f-cat="all">すべて (${all.length})</button>
+          <button class="tab-btn ${focusState.cat === 'simplify' ? 'active' : ''}" data-f-cat="simplify">簡単化 (${counts.simplify})</button>
+          <button class="tab-btn ${focusState.cat === 'arith' ? 'active' : ''}" data-f-cat="arith">演算回路 (${counts.arith})</button>
+          <button class="tab-btn ${focusState.cat === 'comb' ? 'active' : ''}" data-f-cat="comb">組合せ回路 (${counts.comb})</button>
+          <button class="tab-btn ${focusState.cat === 'seq' ? 'active' : ''}" data-f-cat="seq">順序回路・カウンタ (${counts.seq})</button>
+          <button class="tab-btn ${focusState.cat === 'todo' ? 'active' : ''}" data-f-cat="todo">未クリアのみ (${all.length - doneCount})</button>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="btn btn-sm" id="expand-all-ans">全解答を開く</button>
+          <button class="btn btn-sm" id="collapse-all-ans">すべて閉じる</button>
+        </div>
+      </div>
+
+      ${focusState.cat === 'all' ? `<div class="focus-jump-grid">${jumpChipsHtml}</div>` : ''}
+
+      ${cardsHtml}
+
+      <div class="unit-pager">
+        <a href="#home" class="btn">← トップへ戻る</a>
+        <a href="#past-exam" class="btn btn-warn">過去問（山田）で実戦テスト →</a>
+      </div>
+    `;
+
+    bindRevealAndChecks(mainEl);
+
+    mainEl.querySelectorAll('[data-f-cat]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        focusState.cat = btn.dataset.fCat;
+        renderFocus(mainEl);
+      });
+    });
+
+    mainEl.querySelectorAll('[data-focus-jump]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const el = document.getElementById(btn.dataset.focusJump);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    mainEl.querySelectorAll('.checklist-item input[data-check-id]').forEach((cb) => {
+      cb.addEventListener('change', () => {
+        cb.closest('.checklist-item').classList.toggle('checked', cb.checked);
+      });
+    });
+
+    mainEl.querySelectorAll('.focus-problem-box input[data-check-id]').forEach((cb) => {
+      cb.addEventListener('change', () => {
+        const card = cb.closest('.focus-card');
+        if (card) card.classList.toggle('is-done', cb.checked);
+        if (focusState.cat === 'todo') renderFocus(mainEl);
       });
     });
   }
@@ -569,6 +757,14 @@
         results.push({ href: '#basics', tag: '基本の解き方', title: b.title, snippet: strip(b.html).slice(0, 120) + '…' });
       }
     });
+    if (S.ExamFocus && S.ExamFocus.focuses) {
+      S.ExamFocus.focuses.forEach((f) => {
+        const text = `${f.num} ${f.title} ${strip(f.whyNeeded)} ${strip(f.keyPointsHtml)} ${strip(f.problem.question)}`;
+        if (text.toLowerCase().includes(q)) {
+          results.push({ href: '#focus', tag: `重点 ${f.num}`, title: f.title, snippet: strip(f.whyNeeded).slice(0, 120) + '…' });
+        }
+      });
+    }
     S.Flashcards.forEach((c) => {
       if (`${c.q} ${c.a} ${c.unit}`.toLowerCase().includes(q)) {
         results.push({ href: '#flashcards', tag: '暗記カード', title: c.q, snippet: c.a.slice(0, 110) + '…' });
@@ -638,6 +834,7 @@
     });
 
     if (hash === 'home' || hash === '') renderHome(mainEl);
+    else if (hash === 'focus') renderFocus(mainEl);
     else if (hash === 'basics') renderBasicsPage(mainEl);
     else if (hash.startsWith('unit-')) renderUnit(mainEl, hash);
     else if (hash === 'past-exam') renderPastExam(mainEl);

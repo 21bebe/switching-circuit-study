@@ -1487,4 +1487,223 @@ table.logic-table .hi-ess {
   }
 }
 
+/* =========================================================
+   Critical Exam Focus Page (#focus)
+   ========================================================= */
+.focus-summary-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.focus-jump-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.focus-jump-chip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 11px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--ink-primary);
+  font-size: 12.5px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, transform 0.12s;
+}
+
+.focus-jump-chip:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  transform: translateY(-1px);
+}
+
+.focus-jump-chip.is-done {
+  border-color: var(--ok-border);
+  background: var(--ok-soft);
+}
+
+.focus-jump-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.focus-jump-chip.is-done .focus-jump-num {
+  color: var(--ok);
+}
+
+.focus-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.focus-card.is-done {
+  border-top-color: var(--ok);
+}
+
+.focus-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.focus-card-title {
+  margin: 4px 0 12px;
+  font-size: 19px;
+  line-height: 1.38;
+}
+
+.focus-why-box {
+  background: var(--warn-soft);
+  border: 1px solid var(--warn-border);
+  border-left: 4px solid var(--warn);
+  border-radius: var(--radius-sm);
+  padding: 12px 15px;
+  margin-bottom: 14px;
+  font-size: 14px;
+}
+
+.focus-why-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--warn);
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+
+.focus-subhead {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent);
+  margin: 14px 0 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px dashed var(--border-strong);
+}
+
+.focus-problem-box {
+  margin-top: 16px;
+  padding: 15px 16px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+}
+
+.focus-pillar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.focus-pillar-card {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+}
+
+.focus-pillar-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 2px;
+}
+
+.focus-pillar-card h3 {
+  margin: 0 0 6px;
+  font-size: 14.5px;
+  line-height: 1.4;
+}
+
+.focus-pillar-card p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-secondary);
+}
+
+details.focus-collapsible {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+details.focus-collapsible > summary {
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--ink-primary);
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+details.focus-collapsible > summary::-webkit-details-marker {
+  display: none;
+}
+
+details.focus-collapsible > summary::after {
+  content: '開く ▼';
+  font-size: 12px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+details.focus-collapsible[open] > summary::after {
+  content: '閉じる ▲';
+}
+
+details.focus-collapsible[open] > summary {
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+@media (max-width: 900px) {
+  .focus-card {
+    padding: 16px 15px;
+  }
+  .focus-jump-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .focus-jump-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
 
