@@ -173,44 +173,50 @@ window.SwitchStudy.Diagrams = {
   },
 
   adderSubtractor4() {
-    return this._svg(520, 210, `
-      <rect class="box-w" x="150" y="20" width="210" height="54"/>
-      <text x="182" y="44" class="lbl">4ビット 1の補数器</text>
-      <text x="188" y="62" class="lbl-s">B'i = Bi ⊕ C̄ (XNOR)</text>
+    const bits = [0, 1, 2, 3].map((i) => {
+      const x = 445 - i * 120;
+      return `
+        <!-- Bit ${i}: XOR (1's complementer) + FA${i} -->
+        <text x="${x + 12}" y="18" class="lbl">B${i}</text>
+        <path class="w" d="M${x + 18},22 L${x + 18},54"/>
+        <circle class="dot" cx="${x + 48}" cy="38" r="2.8"/>
+        <path class="wr" d="M${x + 48},38 L${x + 48},54"/>
+        <!-- XOR rotated down -->
+        <g transform="translate(${x + 54},54) rotate(90) scale(0.85)">
+          <path class="w" d="M-5,0 Q5,16 -5,32"/>
+          <path class="gate" d="M0,0 Q10,16 0,32 L14,32 Q28,32 36,16 Q28,0 14,0 Z"/>
+        </g>
+        <path class="w" d="M${x + 40},85 L${x + 40},116"/>
+        <text x="${x + 45}" y="106" class="lbl-s">B'${i}</text>
 
-      <rect class="box-b" x="150" y="114" width="210" height="58"/>
-      <text x="195" y="140" class="lbl-b">4ビット並列加算器</text>
-      <text x="192" y="158" class="lbl-s">S = A + B' + C⁻</text>
+        <!-- A${i} -->
+        <text x="${x - 2}" y="104" class="lbl">A${i}</text>
+        <path class="w" d="M${x + 16},98 L${x + 16},116"/>
 
-      <!-- B inputs -->
-      <path class="w" d="M210,4 L210,20"/>
-      <path class="w" d="M255,4 L255,20"/>
-      <path class="w" d="M300,4 L300,20"/>
-      <text x="232" y="14" class="lbl-s">B3..B0</text>
+        <!-- FA${i} -->
+        <rect class="box-b" x="${x}" y="116" width="66" height="54"/>
+        <text x="${x + 19}" y="148" class="lbl-b">FA${i}</text>
 
-      <!-- B' to adder -->
-      <path class="w" d="M210,74 L210,114"/>
-      <path class="w" d="M255,74 L255,114"/>
-      <path class="w" d="M300,74 L300,114"/>
-      <text x="310" y="98" class="lbl-s">B'3..B'0</text>
+        <!-- S${i} -->
+        <path class="wb" d="M${x + 33},170 L${x + 33},202"/>
+        <text x="${x + 25}" y="218" class="lbl-b">S${i}</text>
+      `;
+    }).join('');
+    return this._svg(590, 235, `
+      <!-- Control line S (0:加算 / 1:減算) -->
+      <path class="wr" d="M555,38 L133,38"/>
+      <text x="530" y="24" class="lbl-r">S (0:加算 / 1:減算)</text>
+      <circle class="dot" cx="545" cy="38" r="3"/>
+      <path class="wr" d="M545,38 L545,143 L511,143"/>
+      <text x="518" y="136" class="lbl-r">C⁻=S</text>
 
-      <!-- A inputs -->
-      <path class="w" d="M55,143 L150,143"/>
-      <text x="12" y="147" class="lbl">A3..A0</text>
+      ${bits}
 
-      <!-- Control C -->
-      <path class="wr" d="M475,47 L360,47"/>
-      <text x="415" y="34" class="lbl-r">制御 C</text>
-      <text x="396" y="66" class="lbl-s">1:加算 / 0:減算</text>
-      <circle class="dot" cx="420" cy="47" r="3"/>
-      <path class="wr" d="M420,47 L420,104"/>
-      ${this._notGate(410, 108, 0.9)}
-      <path class="wr" d="M420,132 L420,143 L360,143"/>
-      <text x="372" y="136" class="lbl-r">C⁻=C̄</text>
-
-      <!-- Outputs -->
-      <path class="wb" d="M255,172 L255,196"/>
-      <text x="234" y="206" class="lbl-b">S3..S0</text>
+      <!-- Carry chain -->
+      <path class="wr" d="M445,143 L391,143"/><text x="410" y="136" class="lbl-r">C0</text>
+      <path class="wr" d="M325,143 L271,143"/><text x="290" y="136" class="lbl-r">C1</text>
+      <path class="wr" d="M205,143 L151,143"/><text x="170" y="136" class="lbl-r">C2</text>
+      <path class="wr" d="M85,143 L38,143"/><text x="14" y="147" class="lbl-r">C3</text>
     `);
   },
 
@@ -261,36 +267,38 @@ window.SwitchStudy.Diagrams = {
   },
 
   overflowDetector() {
-    return this._svg(480, 175, `
-      <rect class="box-w" x="95" y="34" width="76" height="56"/>
-      <text x="108" y="58" class="lbl">符号部</text>
-      <text x="115" y="76" class="lbl-s">FA3</text>
-
-      <rect class="box-b" x="210" y="34" width="76" height="56"/>
-      <text x="220" y="58" class="lbl-b">数値MSB</text>
-      <text x="234" y="76" class="lbl-s">FA2</text>
-
-      <rect class="box" x="325" y="34" width="120" height="56"/>
-      <text x="342" y="66" class="lbl-s">下位 FA1, FA0</text>
-
+    const fas = [
+      { i: 3, x: 85, cls: 'box-w', sub: '符号部' },
+      { i: 2, x: 195, cls: 'box-b', sub: '数値MSB' },
+      { i: 1, x: 305, cls: 'box', sub: 'bit 1' },
+      { i: 0, x: 415, cls: 'box', sub: 'bit 0' }
+    ].map((f) => `
+      <rect class="${f.cls}" x="${f.x}" y="34" width="72" height="54"/>
+      <text x="${f.x + 22}" y="58" class="${f.i === 2 ? 'lbl-b' : 'lbl'}">FA${f.i}</text>
+      <text x="${f.x + 14}" y="76" class="lbl-s">${f.sub}</text>
+      <path class="w" d="M${f.x + 20},14 L${f.x + 20},34"/><text x="${f.x + 12}" y="11" class="lbl-s">A${f.i}</text>
+      <path class="w" d="M${f.x + 52},14 L${f.x + 52},34"/><text x="${f.x + 44}" y="11" class="lbl-s">B${f.i}</text>
+      <path class="wb" d="M${f.x + 36},88 L${f.x + 36},106"/><text x="${f.x + 28}" y="118" class="lbl-s">S${f.i}</text>
+    `).join('');
+    return this._svg(540, 195, `
+      ${fas}
       <!-- Carry lines -->
-      <path class="w" d="M325,62 L286,62"/>
-      <path class="wr" d="M210,62 L171,62"/>
-      <text x="182" y="54" class="lbl-r">C2</text>
-      <path class="wr" d="M95,62 L40,62"/>
-      <text x="58" y="54" class="lbl-r">C3</text>
+      <path class="w" d="M518,61 L487,61"/><text x="518" y="55" class="lbl-s">C⁻</text>
+      <path class="w" d="M415,61 L377,61"/><text x="388" y="54" class="lbl-s">C0</text>
+      <path class="w" d="M305,61 L267,61"/><text x="278" y="54" class="lbl-s">C1</text>
+      <path class="wr" d="M195,61 L157,61"/><text x="168" y="54" class="lbl-r">C2</text>
+      <path class="wr" d="M85,61 L32,61"/><text x="10" y="65" class="lbl-r">C3</text>
 
       <!-- Taps to XOR -->
-      <circle class="dot" cx="62" cy="62" r="3"/>
-      <path class="wr" d="M62,62 L62,126 L180,126"/>
-      <circle class="dot" cx="190" cy="62" r="3"/>
-      <path class="wr" d="M190,62 L190,108 L180,108 L180,142"/>
-      <path class="wr" d="M190,62 L190,142 L180,142"/>
+      <circle class="dot" cx="56" cy="61" r="3"/>
+      <path class="wr" d="M56,61 L56,144 L178,144"/>
+      <circle class="dot" cx="176" cy="61" r="3"/>
+      <path class="wr" d="M176,61 L176,120 L158,120 L158,160 L178,160"/>
 
-      ${this._xorGate(184, 118)}
-      <path class="wr" d="M220,134 L270,134"/>
-      <text x="278" y="138" class="lbl-r">Overflow V = C3 ⊕ C2</text>
-      <text x="278" y="156" class="lbl-s">C3とC2が異なるとき 1（オーバーフロー）</text>
+      ${this._xorGate(180, 136)}
+      <path class="wr" d="M216,152 L272,152"/>
+      <text x="280" y="156" class="lbl-r">Overflow V = C3 ⊕ C2</text>
+      <text x="280" y="176" class="lbl-s">C3とC2が異なるとき 1（オーバーフロー）</text>
     `);
   },
 
@@ -540,7 +548,7 @@ window.SwitchStudy.Diagrams = {
         ${i < 3 ? `<path class="w" d="M${x + 94},42 L${x + 94},56 L${x + 107},56"/>` : ''}
       `;
     }).join('');
-    return this._svg(560, 225, `
+    return this._svg(560, 255, `
       ${ffs}
       <path class="wr" d="M22,56 L67,56"/>
       <text x="8" y="48" class="lbl-r">Cp</text>
@@ -557,46 +565,57 @@ window.SwitchStudy.Diagrams = {
       <path class="wb" d="M55,170 L178,170 L178,186 L520,186"/>
       <text x="184" y="180" class="lbl-s">+2Tacc</text>
 
-      <text x="10" y="208" class="lbl-r">Q3</text>
-      <path class="wr" d="M55,212 L230,212 L230,196 L520,196"/>
-      <text x="238" y="210" class="lbl-r">+4Tacc (TCp &gt; 4Tacc が必須!)</text>
+      <text x="10" y="208" class="lbl-b">Q2</text>
+      <path class="wb" d="M55,196 L204,196 L204,212 L520,212"/>
+      <text x="210" y="206" class="lbl-s">+3Tacc</text>
+
+      <text x="10" y="234" class="lbl-r">Q3</text>
+      <path class="wr" d="M55,238 L230,238 L230,222 L520,222"/>
+      <text x="238" y="236" class="lbl-r">+4Tacc (TCp &gt; 4Tacc が必須!)</text>
     `);
   },
 
   asyncMod7() {
-    return this._svg(540, 175, `
-      <!-- FF0 -->
-      <rect class="box-b" x="75" y="26" width="84" height="74"/>
-      <text x="100" y="48" class="lbl-b">FF0 (JK)</text>
-      <text x="82" y="66" class="lbl-s">J0 = Q1·Q2 の否定</text>
-      <text x="82" y="84" class="lbl-s">K0 = 1</text>
-      <path class="wr" d="M22,63 L75,63"/>
-      <text x="12" y="57" class="lbl-r">Cp</text>
+    return this._svg(580, 235, `
+      <!-- FF0, FF1, FF2 (T-FF with active-low async reset R̄) -->
+      ${[0, 1, 2].map((i) => {
+        const x = 90 + i * 155;
+        return `
+          <rect class="box-b" x="${x}" y="34" width="84" height="74"/>
+          <text x="${x + 24}" y="58" class="lbl-b">FF${i}</text>
+          <text x="${x + 14}" y="76" class="lbl-s">T${i} (負エッジ)</text>
+          <text x="${x + 36}" y="102" class="lbl-r">R̄</text>
+          <circle class="gate" cx="${x - 4}" cy="71" r="4"/>
+          <circle class="gate" cx="${x + 42}" cy="112" r="4"/>
+          <path class="wb" d="M${x + 84},52 L${x + 112},52 L${x + 112},18"/>
+          <text x="${x + 104}" y="14" class="lbl-b">Q${i}</text>
+          ${i < 2 ? `<path class="w" d="M${x + 112},52 L${x + 112},71 L${x + 147},71"/>` : ''}
+        `;
+      }).join('')}
 
-      <!-- FF1 -->
-      <rect class="box-b" x="235" y="26" width="84" height="74"/>
-      <text x="260" y="48" class="lbl-b">FF1 (JK)</text>
-      <text x="246" y="68" class="lbl-s">J1=1, K1=1</text>
-      <text x="242" y="86" class="lbl-s">Cp1=Q0+Q1Q2Cp</text>
+      <!-- Clock input -->
+      <path class="wr" d="M22,71 L82,71"/>
+      <text x="8" y="65" class="lbl-r">Cp</text>
 
-      <!-- FF2 -->
-      <rect class="box-b" x="395" y="26" width="84" height="74"/>
-      <text x="420" y="48" class="lbl-b">FF2 (JK)</text>
-      <text x="406" y="68" class="lbl-s">J2=1, K2=1</text>
-      <text x="406" y="86" class="lbl-s">Cp2 = Q1</text>
+      <!-- Feedback taps from Q0, Q1, Q2 to 3-input NAND -->
+      <circle class="dot" cx="202" cy="52" r="3"/>
+      <path class="wb" d="M202,52 L202,158 L266,158"/>
+      <circle class="dot" cx="357" cy="52" r="3"/>
+      <path class="wb" d="M357,52 L357,172 L266,172"/>
+      <circle class="dot" cx="512" cy="52" r="3"/>
+      <path class="wb" d="M512,52 L512,186 L266,186"/>
 
-      <!-- Connections -->
-      <path class="wb" d="M159,46 L200,46 L200,63 L235,63"/>
-      <text x="164" y="40" class="lbl-b">Q0</text>
-      <path class="wb" d="M319,46 L360,46 L360,63 L395,63"/>
-      <text x="324" y="40" class="lbl-b">Q1</text>
-      <path class="wb" d="M479,46 L520,46"/>
-      <text x="486" y="40" class="lbl-b">Q2</text>
+      <!-- 3-input NAND gate (detects Q2Q1Q0 = 111) -->
+      ${this._nandGate(266, 156)}
+      <text x="272" y="206" class="lbl-s">3入力NAND (111検出)</text>
 
-      <!-- Explanation box -->
-      <rect class="box-w" x="30" y="116" width="485" height="48"/>
-      <text x="44" y="136" class="lbl">状態 6 (Q2Q1Q0 = 110) の次のクロックで 000 に戻す工夫：</text>
-      <text x="44" y="154" class="lbl-s">① Q1=Q2=1 のとき J0=0 にして Q0 を 0→1 反転させない　② Cp1 に Cp を加えて Q1, Q2 を 1→0 に反転</text>
+      <!-- Reset rail from NAND output to all R̄ pins -->
+      <path class="wr" d="M308,172 L334,172 L334,132 L132,132"/>
+      <path class="wr" d="M132,132 L132,116"/>
+      <circle class="dot" cx="287" cy="132" r="3"/>
+      <path class="wr" d="M287,132 L287,116"/>
+      <path class="wr" d="M334,132 L442,132 L442,116"/>
+      <text x="140" y="128" class="lbl-r">R̄ = (Q2·Q1·Q0)̄ → 111になった瞬間に全FFを000へリセット</text>
     `);
   },
 
@@ -637,51 +656,80 @@ window.SwitchStudy.Diagrams = {
   },
 
   comparator3() {
-    return this._svg(540, 265, `
-      <rect class="box-b" x="45" y="16" width="88" height="62"/>
-      <text x="53" y="44" class="lbl-b">1bit比較2</text>
-      <text x="58" y="62" class="lbl-s">(A2, B2)</text>
-      <path class="w" d="M18,34 L45,34"/><text x="2" y="38" class="lbl-s">A2</text>
-      <path class="w" d="M18,60 L45,60"/><text x="2" y="64" class="lbl-s">B2</text>
+    return this._svg(600, 310, `
+      <!-- Three 1-bit comparators -->
+      <rect class="box-b" x="42" y="14" width="86" height="72"/>
+      <text x="48" y="46" class="lbl-b">1bit比較2</text>
+      <text x="55" y="64" class="lbl-s">(A2, B2)</text>
+      <path class="w" d="M18,34 L42,34"/><text x="2" y="38" class="lbl-s">A2</text>
+      <path class="w" d="M18,66 L42,66"/><text x="2" y="70" class="lbl-s">B2</text>
 
-      <rect class="box-b" x="45" y="100" width="88" height="62"/>
-      <text x="53" y="128" class="lbl-b">1bit比較1</text>
-      <text x="58" y="146" class="lbl-s">(A1, B1)</text>
-      <path class="w" d="M18,118 L45,118"/><text x="2" y="122" class="lbl-s">A1</text>
-      <path class="w" d="M18,144 L45,144"/><text x="2" y="148" class="lbl-s">B1</text>
+      <rect class="box-b" x="42" y="116" width="86" height="72"/>
+      <text x="48" y="148" class="lbl-b">1bit比較1</text>
+      <text x="55" y="166" class="lbl-s">(A1, B1)</text>
+      <path class="w" d="M18,136 L42,136"/><text x="2" y="140" class="lbl-s">A1</text>
+      <path class="w" d="M18,168 L42,168"/><text x="2" y="172" class="lbl-s">B1</text>
 
-      <rect class="box-b" x="45" y="184" width="88" height="62"/>
-      <text x="53" y="212" class="lbl-b">1bit比較0</text>
-      <text x="58" y="230" class="lbl-s">(A0, B0)</text>
-      <path class="w" d="M18,202 L45,202"/><text x="2" y="206" class="lbl-s">A0</text>
-      <path class="w" d="M18,228 L45,228"/><text x="2" y="232" class="lbl-s">B0</text>
+      <rect class="box-b" x="42" y="218" width="86" height="72"/>
+      <text x="48" y="250" class="lbl-b">1bit比較0</text>
+      <text x="55" y="268" class="lbl-s">(A0, B0)</text>
+      <path class="w" d="M18,238 L42,238"/><text x="2" y="242" class="lbl-s">A0</text>
+      <path class="w" d="M18,270 L42,270"/><text x="2" y="274" class="lbl-s">B0</text>
 
-      <!-- Logic summary blocks -->
-      <rect class="box" x="195" y="18" width="215" height="62"/>
-      <text x="206" y="42" class="lbl">OR + AND（A &gt; B 判定）</text>
-      <text x="206" y="64" class="lbl-s">Z20 + Z21·Z10 + Z21·Z11·Z00</text>
+      <!-- Z20 -> OR0 (top) -->
+      <path class="w" d="M128,28 L426,28"/><text x="134" y="23" class="lbl-s">Z20</text>
 
-      <rect class="box" x="195" y="102" width="215" height="58"/>
-      <text x="206" y="126" class="lbl">3入力AND（A = B 判定）</text>
-      <text x="206" y="146" class="lbl-s">Z21 · Z11 · Z01</text>
+      <!-- Z21 vertical trunk (blue) -->
+      <path class="wb" d="M128,50 L212,50 L212,262 L308,262"/><text x="134" y="45" class="lbl-b">Z21</text>
+      <circle class="dot" cx="212" cy="50" r="2.8"/><path class="wb" d="M212,50 L308,50"/>
+      <circle class="dot" cx="212" cy="96" r="2.8"/><path class="wb" d="M212,96 L308,96"/>
+      <circle class="dot" cx="212" cy="148" r="2.8"/><path class="wb" d="M212,148 L308,148"/>
+      <circle class="dot" cx="212" cy="210" r="2.8"/><path class="wb" d="M212,210 L308,210"/>
 
-      <rect class="box" x="195" y="184" width="215" height="62"/>
-      <text x="206" y="208" class="lbl">OR + AND（A &lt; B 判定）</text>
-      <text x="206" y="230" class="lbl-s">Z22 + Z21·Z12 + Z21·Z11·Z02</text>
+      <!-- Z22 -> OR2 (bottom) -->
+      <path class="w" d="M128,72 L176,72 L176,292 L426,292"/><text x="134" y="68" class="lbl-s">Z22</text>
 
-      <!-- Connections -->
-      <path class="w" d="M133,47 L195,47"/>
-      <path class="w" d="M133,131 L195,131"/>
-      <path class="w" d="M133,215 L195,215"/>
-      <path class="wd" d="M164,47 L164,215"/>
-      <text x="137" y="40" class="lbl-s">Z20..22</text>
-      <text x="137" y="124" class="lbl-s">Z10..12</text>
-      <text x="137" y="208" class="lbl-s">Z00..02</text>
+      <!-- Z10 -> AND(Z21·Z10) -->
+      <path class="w" d="M128,130 L248,130 L248,66 L308,66"/><text x="134" y="125" class="lbl-s">Z10</text>
 
-      <!-- Outputs -->
-      <path class="wb" d="M410,49 L455,49"/><text x="462" y="53" class="lbl-b">Z0 (A&gt;B)</text>
-      <path class="wb" d="M410,131 L455,131"/><text x="462" y="135" class="lbl-b">Z1 (A=B)</text>
-      <path class="wb" d="M410,215 L455,215"/><text x="462" y="219" class="lbl-b">Z2 (A&lt;B)</text>
+      <!-- Z11 vertical trunk (green) -->
+      <path class="wg" d="M128,152 L230,152 L230,274 L308,274"/><text x="134" y="148" class="lbl-g">Z11</text>
+      <circle class="dot" cx="230" cy="152" r="2.8"/><path class="wg" d="M230,152 L230,106 L308,106"/>
+      <circle class="dot" cx="230" cy="160" r="2.8"/><path class="wg" d="M230,160 L308,160"/>
+
+      <!-- Z12 -> AND(Z21·Z12) -->
+      <path class="w" d="M128,174 L264,174 L264,226 L308,226"/><text x="134" y="170" class="lbl-s">Z12</text>
+
+      <!-- Z00 -> AND(Z21·Z11·Z00) -->
+      <path class="w" d="M128,232 L278,232 L278,116 L308,116"/><text x="134" y="227" class="lbl-s">Z00</text>
+
+      <!-- Z01 -> AND(Z21·Z11·Z01) -->
+      <path class="w" d="M128,254 L290,254 L290,172 L308,172"/><text x="134" y="250" class="lbl-s">Z01</text>
+
+      <!-- Z02 -> AND(Z21·Z11·Z02) -->
+      <path class="w" d="M128,284 L308,284"/><text x="134" y="280" class="lbl-s">Z02</text>
+
+      <!-- 5 AND gates -->
+      ${this._andGate(308, 42, 0.9)}
+      ${this._andGate(308, 92, 0.9)}
+      ${this._andGate(308, 146, 0.9)}
+      ${this._andGate(308, 202, 0.9)}
+      ${this._andGate(308, 258, 0.9)}
+
+      <!-- OR0 (Z0: A>B) -->
+      <path class="w" d="M339,56 L384,56 L384,42 L426,42"/>
+      <path class="w" d="M339,106 L396,106 L396,54 L426,54"/>
+      ${this._orGate(424, 24)}
+      <path class="wb" d="M460,40 L504,40"/><text x="510" y="44" class="lbl-b">Z0 (A&gt;B)</text>
+
+      <!-- Z1 (A=B) -->
+      <path class="wb" d="M339,160 L504,160"/><text x="510" y="164" class="lbl-b">Z1 (A=B)</text>
+
+      <!-- OR2 (Z2: A<B) -->
+      <path class="w" d="M339,216 L396,216 L396,266 L426,266"/>
+      <path class="w" d="M339,272 L384,272 L384,280 L426,280"/>
+      ${this._orGate(424, 262)}
+      <path class="wb" d="M460,278 L504,278"/><text x="510" y="282" class="lbl-b">Z2 (A&lt;B)</text>
     `);
   },
 
@@ -788,37 +836,49 @@ window.SwitchStudy.Diagrams = {
   },
 
   bcdDecoder() {
-    const rows = [
-      ['Z0', 'D̄C̄B̄Ā (4入力AND)'], ['Z1', 'D̄C̄B̄A (4入力AND)'],
-      ['Z2', 'C̄BĀ (3入力AND)'], ['Z3', 'C̄BA (3入力AND)'],
-      ['Z4', 'CB̄Ā (3入力AND)'], ['Z5', 'CB̄A (3入力AND)'],
-      ['Z6', 'CBĀ (3入力AND)'], ['Z7', 'CBA (3入力AND)'],
-      ['Z8', 'DĀ (2入力AND)'], ['Z9', 'DA (2入力AND)']
+    // 8 vertical rails: D(24), D̄(58), C(92), C̄(126), B(160), B̄(194), A(228), Ā(262)
+    const rails = { D: 24, Dn: 58, C: 92, Cn: 126, B: 160, Bn: 194, A: 228, An: 262 };
+    const railDefs = [
+      ['D', 24, 'D̄', 58], ['C', 92, 'C̄', 126], ['B', 160, 'B̄', 194], ['A', 228, 'Ā', 262]
+    ].map(([p, px, n, nx]) => `
+      <text x="${px - 4}" y="14" class="lbl">${p}</text>
+      <path class="w" d="M${px},20 L${px},385"/>
+      <circle class="dot" cx="${px}" cy="30" r="2.5"/>
+      <path class="w" d="M${px},30 L${px + 10},30"/>
+      ${this._notGate(px + 10, 22, 0.72)}
+      <path class="w" d="M${nx},29 L${nx},385"/>
+      <text x="${nx - 4}" y="14" class="lbl-s">${n}</text>
+    `).join('');
+
+    const specs = [
+      ['Z0', 'D̄C̄B̄Ā', ['Dn', 'Cn', 'Bn', 'An']],
+      ['Z1', 'D̄C̄B̄A', ['Dn', 'Cn', 'Bn', 'A']],
+      ['Z2', 'C̄BĀ', ['Cn', 'B', 'An']],
+      ['Z3', 'C̄BA', ['Cn', 'B', 'A']],
+      ['Z4', 'CB̄Ā', ['C', 'Bn', 'An']],
+      ['Z5', 'CB̄A', ['C', 'Bn', 'A']],
+      ['Z6', 'CBĀ', ['C', 'B', 'An']],
+      ['Z7', 'CBA', ['C', 'B', 'A']],
+      ['Z8', 'DĀ', ['D', 'An']],
+      ['Z9', 'DA', ['D', 'A']]
     ];
-    const items = rows.map((r, i) => {
-      const col = i < 5 ? 0 : 1;
-      const row = i % 5;
-      const x = 135 + col * 205;
-      const y = 16 + row * 38;
+
+    const gates = specs.map(([name, expr, taps], idx) => {
+      const y = 48 + idx * 33;
+      const lines = taps.map((t, ti) => {
+        const rx = rails[t];
+        const py = y + 4 + ti * (20 / Math.max(taps.length - 1, 1));
+        return `<circle class="dot" cx="${rx}" cy="${py}" r="2.5"/><path class="w" d="M${rx},${py} L316,${py}"/>`;
+      }).join('');
       return `
-        <path class="w" d="M${x - 24},${y + 14} L${x},${y + 14}"/>
-        <rect class="box-b" x="${x}" y="${y}" width="130" height="28"/>
-        <text x="${x + 8}" y="${y + 18}" class="lbl-s">${r[1]}</text>
-        <path class="wb" d="M${x + 130},${y + 14} L${x + 150},${y + 14}"/>
-        <text x="${x + 154}" y="${y + 18}" class="lbl-b">${r[0]}</text>
+        ${lines}
+        ${this._andGate(316, y, 0.8)}
+        <path class="wb" d="M344,${y + 13} L388,${y + 13}"/>
+        <text x="394" y="${y + 17}" class="lbl-b">${name} = ${expr}</text>
       `;
     }).join('');
-    return this._svg(540, 215, `
-      <rect class="box-w" x="14" y="26" width="82" height="162"/>
-      <text x="28" y="64" class="lbl">入力バス</text>
-      <text x="24" y="90" class="lbl-s">D, D̄</text>
-      <text x="24" y="112" class="lbl-s">C, C̄</text>
-      <text x="24" y="134" class="lbl-s">B, B̄</text>
-      <text x="24" y="156" class="lbl-s">A, Ā</text>
-      <text x="20" y="176" class="lbl-s">(NOT×4)</text>
-      <path class="w" d="M96,107 L111,107 L111,30 L111,182"/>
-      ${items}
-    `);
+
+    return this._svg(500, 395, `${railDefs}${gates}`);
   },
 
   mux4Gate() {
@@ -848,110 +908,233 @@ window.SwitchStudy.Diagrams = {
   },
 
   mux4bit2ch() {
+    // Control rails: S(86), S̄(122), EI(162)
     const bits = [3, 2, 1, 0].map((b, idx) => {
-      const y = 16 + idx * 46;
+      const y = 52 + idx * 78;
       return `
-        <text x="10" y="${y + 14}" class="lbl">A${b}</text>
-        <text x="10" y="${y + 34}" class="lbl">B${b}</text>
-        <path class="w" d="M32,${y + 10} L115,${y + 10}"/>
-        <path class="w" d="M32,${y + 30} L115,${y + 30}"/>
-        <rect class="box-b" x="115" y="${y + 2}" width="175" height="34"/>
-        <text x="124" y="${y + 23}" class="lbl-s">(A${b}·S + B${b}·S̄) · EI</text>
-        <path class="wb" d="M290,${y + 19} L350,${y + 19}"/>
-        <text x="358" y="${y + 23}" class="lbl-b">Z${b}</text>
+        <!-- Bit ${b}: AND(A${b}, S, EI) & AND(B${b}, S̄, EI) -> OR -> Z${b} -->
+        <text x="10" y="${y + 12}" class="lbl">A${b}</text>
+        <path class="w" d="M32,${y + 8} L218,${y + 8}"/>
+        <circle class="dot" cx="86" cy="${y + 16}" r="2.5"/><path class="wr" d="M86,${y + 16} L218,${y + 16}"/>
+        <circle class="dot" cx="162" cy="${y + 24}" r="2.5"/><path class="wg" d="M162,${y + 24} L218,${y + 24}"/>
+        ${this._andGate(218, y + 3, 0.8)}
+
+        <text x="10" y="${y + 48}" class="lbl">B${b}</text>
+        <path class="w" d="M32,${y + 44} L218,${y + 44}"/>
+        <circle class="dot" cx="122" cy="${y + 52}" r="2.5"/><path class="wr" d="M122,${y + 52} L218,${y + 52}"/>
+        <circle class="dot" cx="162" cy="${y + 60}" r="2.5"/><path class="wg" d="M162,${y + 60} L218,${y + 60}"/>
+        ${this._andGate(218, y + 39, 0.8)}
+
+        <path class="w" d="M246,${y + 16} L292,${y + 16} L292,${y + 28} L322,${y + 28}"/>
+        <path class="w" d="M246,${y + 52} L292,${y + 52} L292,${y + 40} L322,${y + 40}"/>
+        ${this._orGate(320, y + 20, 0.85)}
+        <path class="wb" d="M351,${y + 34} L406,${y + 34}"/>
+        <text x="412" y="${y + 38}" class="lbl-b">Z${b} = (A${b}S + B${b}S̄)EI</text>
       `;
     }).join('');
-    return this._svg(460, 225, `
+    return this._svg(545, 375, `
+      <!-- Control headers & NOT gates -->
+      <text x="80" y="16" class="lbl-r">S</text>
+      <path class="wr" d="M86,22 L86,360"/>
+      <circle class="dot" cx="86" cy="30" r="2.5"/>
+      <path class="wr" d="M86,30 L96,30"/>
+      ${this._notGate(96, 22, 0.72)}
+      <path class="wr" d="M122,29 L122,360"/>
+      <text x="118" y="16" class="lbl-r">S̄</text>
+
+      <text x="134" y="16" class="lbl-g">ĒĪ</text>
+      <path class="wg" d="M140,22 L140,30 L144,30"/>
+      ${this._notGate(144, 22, 0.72)}
+      <path class="wg" d="M162,29 L162,360"/>
+      <text x="166" y="16" class="lbl-g">EI</text>
+
       ${bits}
-      <rect class="box-w" x="85" y="198" width="245" height="22"/>
-      <text x="95" y="213" class="lbl-s">共通制御：S, S̄, EI（各ビット3入力AND×2＋OR×1）</text>
     `);
   },
 
   demux2bit4ch() {
+    // Rails: D1(26), D0(56), S1(94), S̄1(128), S0(166), S̄0(200), EI(244)
+    const rx = { D1: 26, D0: 56, S1: 94, S1n: 128, S0: 166, S0n: 200, EI: 244 };
     const chs = [
-      ['ch.0 (S̄1S̄0)', 'Z01, Z00', 18],
-      ['ch.1 (S̄1S0)', 'Z11, Z10', 64],
-      ['ch.2 (S1S̄0)', 'Z21, Z20', 110],
-      ['ch.3 (S1S0)', 'Z31, Z30', 156]
+      ['Z01', 'D1·S̄1S̄0·EI', ['D1', 'S1n', 'S0n', 'EI']],
+      ['Z00', 'D0·S̄1S̄0·EI', ['D0', 'S1n', 'S0n', 'EI']],
+      ['Z11', 'D1·S̄1S0·EI', ['D1', 'S1n', 'S0', 'EI']],
+      ['Z10', 'D0·S̄1S0·EI', ['D0', 'S1n', 'S0', 'EI']],
+      ['Z21', 'D1·S1S̄0·EI', ['D1', 'S1', 'S0n', 'EI']],
+      ['Z20', 'D0·S1S̄0·EI', ['D0', 'S1', 'S0n', 'EI']],
+      ['Z31', 'D1·S1S0·EI', ['D1', 'S1', 'S0', 'EI']],
+      ['Z30', 'D0·S1S0·EI', ['D0', 'S1', 'S0', 'EI']]
     ];
-    const blocks = chs.map(([label, out, y]) => `
-      <path class="w" d="M112,${y + 16} L165,${y + 16}"/>
-      <rect class="box-b" x="165" y="${y}" width="185" height="34"/>
-      <text x="175" y="${y + 21}" class="lbl-s">4入力AND×2：Di·${label}·EI</text>
-      <path class="wb" d="M350,${y + 17} L405,${y + 17}"/>
-      <text x="412" y="${y + 21}" class="lbl-b">${out}</text>
-    `).join('');
-    return this._svg(500, 215, `
-      <rect class="box-w" x="14" y="45" width="98" height="110"/>
-      <text x="26" y="76" class="lbl">入力データ</text>
-      <text x="34" y="98" class="lbl-b">D1, D0</text>
-      <text x="24" y="124" class="lbl-s">制御: S1,S0</text>
-      <text x="24" y="142" class="lbl-s">ĒĪ (NOT×3)</text>
-      <path class="w" d="M112,34 L112,172"/>
-      ${blocks}
+    const gates = chs.map(([out, expr, taps], idx) => {
+      const y = 50 + idx * 38;
+      const lines = taps.map((t, ti) => {
+        const py = y + 3 + ti * 7;
+        const cls = t === 'EI' ? 'wg' : (t.startsWith('S') ? 'wr' : 'w');
+        return `<circle class="dot" cx="${rx[t]}" cy="${py}" r="2.4"/><path class="${cls}" d="M${rx[t]},${py} L306,${py}"/>`;
+      }).join('');
+      return `
+        ${lines}
+        ${this._andGate(306, y, 0.85)}
+        <path class="wb" d="M336,${y + 14} L384,${y + 14}"/>
+        <text x="390" y="${y + 18}" class="lbl-b">${out} = ${expr}</text>
+      `;
+    }).join('');
+    return this._svg(545, 365, `
+      <text x="18" y="16" class="lbl">D1</text><path class="w" d="M26,22 L26,350"/>
+      <text x="48" y="16" class="lbl">D0</text><path class="w" d="M56,22 L56,350"/>
+
+      <text x="86" y="16" class="lbl-r">S1</text><path class="wr" d="M94,22 L94,350"/>
+      <circle class="dot" cx="94" cy="30" r="2.4"/><path class="wr" d="M94,30 L102,30"/>
+      ${this._notGate(102, 22, 0.72)}<path class="wr" d="M128,29 L128,350"/><text x="122" y="16" class="lbl-r">S̄1</text>
+
+      <text x="158" y="16" class="lbl-r">S0</text><path class="wr" d="M166,22 L166,350"/>
+      <circle class="dot" cx="166" cy="30" r="2.4"/><path class="wr" d="M166,30 L174,30"/>
+      ${this._notGate(174, 22, 0.72)}<path class="wr" d="M200,29 L200,350"/><text x="194" y="16" class="lbl-r">S̄0</text>
+
+      <text x="218" y="16" class="lbl-g">ĒĪ</text><path class="wg" d="M224,22 L224,30 L226,30"/>
+      ${this._notGate(226, 22, 0.72)}<path class="wg" d="M244,29 L244,350"/><text x="248" y="16" class="lbl-g">EI</text>
+
+      ${gates}
     `);
   },
 
   demux4bit2ch() {
-    return this._svg(500, 175, `
-      <rect class="box-w" x="16" y="34" width="110" height="96"/>
-      <text x="28" y="64" class="lbl">4ビット入力</text>
-      <text x="28" y="86" class="lbl-b">D3, D2, D1, D0</text>
-      <text x="28" y="112" class="lbl-s">S, ĒĪ (NOT×2)</text>
+    // Rails: D3(24), D2(52), D1(80), D0(108), S(148), S̄(184), EI(226)
+    const rx = { D3: 24, D2: 52, D1: 80, D0: 108, S: 148, Sn: 184, EI: 226 };
+    const specs = [
+      ['Z03', 'D3·S̄·EI', ['D3', 'Sn', 'EI']],
+      ['Z02', 'D2·S̄·EI', ['D2', 'Sn', 'EI']],
+      ['Z01', 'D1·S̄·EI', ['D1', 'Sn', 'EI']],
+      ['Z00', 'D0·S̄·EI', ['D0', 'Sn', 'EI']],
+      ['Z13', 'D3·S·EI', ['D3', 'S', 'EI']],
+      ['Z12', 'D2·S·EI', ['D2', 'S', 'EI']],
+      ['Z11', 'D1·S·EI', ['D1', 'S', 'EI']],
+      ['Z10', 'D0·S·EI', ['D0', 'S', 'EI']]
+    ];
+    const gates = specs.map(([out, expr, taps], idx) => {
+      const y = 50 + idx * 36;
+      const lines = taps.map((t, ti) => {
+        const py = y + 4 + ti * 9;
+        const cls = t === 'EI' ? 'wg' : (t.startsWith('S') ? 'wr' : 'w');
+        return `<circle class="dot" cx="${rx[t]}" cy="${py}" r="2.4"/><path class="${cls}" d="M${rx[t]},${py} L288,${py}"/>`;
+      }).join('');
+      return `
+        ${lines}
+        ${this._andGate(288, y, 0.85)}
+        <path class="wb" d="M318,${y + 14} L368,${y + 14}"/>
+        <text x="374" y="${y + 18}" class="lbl-b">${out} = ${expr}</text>
+      `;
+    }).join('');
+    return this._svg(505, 350, `
+      <text x="16" y="16" class="lbl">D3</text><path class="w" d="M24,22 L24,335"/>
+      <text x="44" y="16" class="lbl">D2</text><path class="w" d="M52,22 L52,335"/>
+      <text x="72" y="16" class="lbl">D1</text><path class="w" d="M80,22 L80,335"/>
+      <text x="100" y="16" class="lbl">D0</text><path class="w" d="M108,22 L108,335"/>
 
-      <path class="w" d="M126,56 L190,56"/>
-      <rect class="box-b" x="190" y="24" width="185" height="54"/>
-      <text x="200" y="46" class="lbl-b">ch.0 用 3入力AND×4</text>
-      <text x="200" y="66" class="lbl-s">Z0i = Di · S̄ · EI (i=0..3)</text>
-      <path class="wb" d="M375,51 L420,51"/><text x="426" y="55" class="lbl-b">Z03..Z00</text>
+      <text x="142" y="16" class="lbl-r">S</text><path class="wr" d="M148,22 L148,335"/>
+      <circle class="dot" cx="148" cy="30" r="2.4"/><path class="wr" d="M148,30 L158,30"/>
+      ${this._notGate(158, 22, 0.72)}<path class="wr" d="M184,29 L184,335"/><text x="180" y="16" class="lbl-r">S̄</text>
 
-      <path class="w" d="M126,108 L190,108"/>
-      <rect class="box-b" x="190" y="92" width="185" height="54"/>
-      <text x="200" y="114" class="lbl-b">ch.1 用 3入力AND×4</text>
-      <text x="200" y="134" class="lbl-s">Z1i = Di · S · EI (i=0..3)</text>
-      <path class="wb" d="M375,119 L420,119"/><text x="426" y="123" class="lbl-b">Z13..Z10</text>
+      <text x="200" y="16" class="lbl-g">ĒĪ</text><path class="wg" d="M206,22 L206,30 L208,30"/>
+      ${this._notGate(208, 22, 0.72)}<path class="wg" d="M226,29 L226,335"/><text x="230" y="16" class="lbl-g">EI</text>
+
+      ${gates}
     `);
   },
 
   cla2bit() {
-    return this._svg(540, 215, `
-      <!-- G, P blocks -->
-      <rect class="box" x="16" y="20" width="118" height="66"/>
-      <text x="26" y="44" class="lbl">下位 (A0, B0)</text>
-      <text x="26" y="62" class="lbl-s">G0 = A0·B0</text>
-      <text x="26" y="78" class="lbl-s">P0 = A0⊕B0</text>
+    return this._svg(620, 315, `
+      <!-- Inputs: C⁻, A0, B0, A1, B1 -->
+      <text x="8" y="24" class="lbl-r">C⁻</text>
+      <path class="wr" d="M28,20 L488,20"/>
 
-      <rect class="box" x="16" y="114" width="118" height="66"/>
-      <text x="26" y="138" class="lbl">上位 (A1, B1)</text>
-      <text x="26" y="156" class="lbl-s">G1 = A1·B1</text>
-      <text x="26" y="172" class="lbl-s">P1 = A1⊕B1</text>
+      <text x="8" y="64" class="lbl">A0</text>
+      <text x="8" y="84" class="lbl">B0</text>
+      <path class="w" d="M28,60 L92,60"/>
+      <path class="w" d="M28,80 L92,80"/>
+      <circle class="dot" cx="52" cy="60" r="2.5"/><path class="w" d="M52,60 L52,110 L92,110"/>
+      <circle class="dot" cx="66" cy="80" r="2.5"/><path class="w" d="M66,80 L66,126 L92,126"/>
 
-      <!-- CLA Carry Generator -->
-      <rect class="box-b" x="180" y="18" width="190" height="164"/>
-      <text x="204" y="42" class="lbl-b">2ビットCLA回路</text>
-      <text x="190" y="70" class="lbl-s">C0 = C⁻P0 + G0</text>
-      <text x="190" y="90" class="lbl-s">(2入力AND×1 + OR×1)</text>
-      <line x1="190" y1="104" x2="360" y2="104" class="wd"/>
-      <text x="190" y="126" class="lbl-s">C1 = C⁻P0P1 + G0P1 + G1</text>
-      <text x="190" y="146" class="lbl-s">(3入力AND×1 + 2入力AND×1</text>
-      <text x="190" y="164" class="lbl-s"> ＋ 3入力OR×1)</text>
+      <!-- P0 = A0⊕B0, G0 = A0B0 -->
+      ${this._xorGate(94, 56, 0.85)}
+      ${this._andGate(94, 104, 0.85)}
+      <text x="130" y="64" class="lbl-b">P0</text>
+      <text x="130" y="112" class="lbl-g">G0</text>
 
-      <path class="w" d="M134,53 L180,53"/>
-      <path class="w" d="M134,147 L180,147"/>
-      <path class="wr" d="M275,2 L275,18"/><text x="282" y="14" class="lbl-r">C⁻</text>
+      <!-- A1, B1 -->
+      <text x="8" y="192" class="lbl">A1</text>
+      <text x="8" y="212" class="lbl">B1</text>
+      <path class="w" d="M28,188 L92,188"/>
+      <path class="w" d="M28,208 L92,208"/>
+      <circle class="dot" cx="52" cy="188" r="2.5"/><path class="w" d="M52,188 L52,248 L92,248"/>
+      <circle class="dot" cx="66" cy="208" r="2.5"/><path class="w" d="M66,208 L66,264 L92,264"/>
 
-      <!-- Sums & C1 output -->
-      <rect class="box-w" x="412" y="24" width="112" height="50"/>
-      <text x="424" y="46" class="lbl">XOR (S0)</text>
-      <text x="422" y="64" class="lbl-s">S0 = C⁻ ⊕ P0</text>
+      <!-- P1 = A1⊕B1, G1 = A1B1 -->
+      ${this._xorGate(94, 184, 0.85)}
+      ${this._andGate(94, 242, 0.85)}
+      <text x="130" y="192" class="lbl-b">P1</text>
+      <text x="130" y="250" class="lbl-g">G1</text>
 
-      <rect class="box-w" x="412" y="88" width="112" height="50"/>
-      <text x="424" y="110" class="lbl">XOR (S1)</text>
-      <text x="422" y="128" class="lbl-s">S1 = C0 ⊕ P1</text>
+      <!-- P0 trunk (blue): to S0, AND(C⁻P0), AND(C⁻P0P1) -->
+      <path class="wb" d="M125,70 L185,70"/>
+      <circle class="dot" cx="185" cy="70" r="2.5"/>
+      <path class="wb" d="M185,70 L185,36 L488,36"/>
+      <path class="wb" d="M185,70 L185,172 L274,172"/>
+      <circle class="dot" cx="185" cy="88" r="2.5"/>
+      <path class="wb" d="M185,88 L274,88"/>
 
-      <path class="wb" d="M370,113 L412,113"/><text x="378" y="106" class="lbl-b">C0</text>
-      <path class="wr" d="M370,164 L445,164"/><text x="452" y="168" class="lbl-r">C1 (最上位桁上り)</text>
+      <!-- C⁻ taps -->
+      <circle class="dot" cx="225" cy="20" r="2.5"/>
+      <path class="wr" d="M225,20 L225,162 L274,162"/>
+      <circle class="dot" cx="225" cy="74" r="2.5"/>
+      <path class="wr" d="M225,74 L274,74"/>
+
+      <!-- G0 trunk (green): to OR(C0), AND(G0P1) -->
+      <path class="wg" d="M123,118 L248,118"/>
+      <circle class="dot" cx="248" cy="118" r="2.5"/>
+      <path class="wg" d="M248,118 L374,118"/>
+      <path class="wg" d="M248,118 L248,214 L274,214"/>
+
+      <!-- P1 trunk (blue): to S1, AND(C⁻P0P1), AND(G0P1) -->
+      <path class="wb" d="M125,198 L206,198"/>
+      <circle class="dot" cx="206" cy="198" r="2.5"/>
+      <path class="wb" d="M206,198 L206,144 L488,144"/>
+      <circle class="dot" cx="206" cy="182" r="2.5"/>
+      <path class="wb" d="M206,182 L274,182"/>
+      <path class="wb" d="M206,198 L206,228 L274,228"/>
+
+      <!-- G1 -> OR(C1) -->
+      <path class="wg" d="M123,256 L374,256"/>
+
+      <!-- CLA AND gates: C⁻P0, C⁻P0P1, G0P1 -->
+      ${this._andGate(274, 68, 0.85)}
+      <text x="275" y="106" class="lbl-s">C⁻P0</text>
+      ${this._andGate(274, 158, 0.85)}
+      <text x="268" y="196" class="lbl-s">C⁻P0P1</text>
+      ${this._andGate(274, 208, 0.85)}
+      <text x="275" y="246" class="lbl-s">G0P1</text>
+
+      <!-- C0 = C⁻P0 + G0 (OR gate) -->
+      <path class="w" d="M304,82 L344,82 L344,104 L374,104"/>
+      ${this._orGate(372, 96, 0.9)}
+      <path class="wr" d="M404,110 L452,110 L452,128 L488,128"/>
+      <text x="412" y="104" class="lbl-r">C0</text>
+
+      <!-- C1 = C⁻P0P1 + G0P1 + G1 (3-input OR gate) -->
+      <path class="w" d="M304,172 L344,172 L344,234 L374,234"/>
+      <path class="w" d="M304,222 L332,222 L332,245 L374,245"/>
+      ${this._orGate(372, 230, 0.95)}
+      <path class="wr" d="M406,245 L535,245"/>
+      <text x="542" y="249" class="lbl-r">C1</text>
+
+      <!-- Sum XOR gates: S0 = C⁻⊕P0, S1 = C0⊕P1 -->
+      ${this._xorGate(488, 14, 0.85)}
+      <path class="wb" d="M519,28 L545,28"/><text x="550" y="32" class="lbl-b">S0</text>
+
+      ${this._xorGate(488, 122, 0.85)}
+      <path class="wb" d="M519,136 L545,136"/><text x="550" y="140" class="lbl-b">S1</text>
+
+      <text x="14" y="302" class="lbl-s">C0 = C⁻P0 + G0　／　C1 = C⁻P0P1 + G0P1 + G1　／　S0 = C⁻⊕P0, S1 = C0⊕P1</text>
     `);
   },
 
@@ -1237,6 +1420,79 @@ window.SwitchStudy.Diagrams = {
       <path class="wb" d="M432,58 L480,58"/><text x="486" y="62" class="lbl-b">Q</text>
       <path class="wg" d="M432,96 L464,96 L464,136 L322,136 L322,60 L348,60"/>
       <text x="438" y="90" class="lbl-g">Q̄</text>
+    `);
+  },
+
+  mux4FromDecoder() {
+    const chs = [
+      ['A', 'D0', 28],
+      ['B', 'D1', 72],
+      ['C', 'D2', 116],
+      ['D', 'D3', 160]
+    ];
+    const rows = chs.map(([inp, dec, y]) => `
+      <text x="195" y="${y + 4}" class="lbl-r">${dec}</text>
+      <path class="wr" d="M180,${y + 8} L260,${y + 8}"/>
+      <text x="215" y="${y + 24}" class="lbl">${inp}</text>
+      <path class="w" d="M230,${y + 20} L260,${y + 20}"/>
+      ${this._andGate(260, y, 0.88)}
+      <path class="w" d="M291,${y + 14} L364,${y + 14} L364,104 L402,104"/>
+    `).join('');
+    return this._svg(520, 215, `
+      <!-- 2-bit Decoder -->
+      <rect class="box-b" x="78" y="24" width="102" height="162"/>
+      <text x="90" y="96" class="lbl-b">2ビット</text>
+      <text x="90" y="116" class="lbl-b">デコーダ</text>
+      <text x="92" y="138" class="lbl-s">(2→4出力)</text>
+
+      <path class="wr" d="M24,78 L78,78"/><text x="4" y="82" class="lbl-r">S1</text>
+      <path class="wr" d="M24,132 L78,132"/><text x="4" y="136" class="lbl-r">S0</text>
+
+      ${rows}
+
+      ${this._orGate(400, 88)}
+      <path class="wb" d="M436,104 L478,104"/>
+      <text x="484" y="108" class="lbl-b">Z</text>
+      <text x="394" y="138" class="lbl-s">4入力OR</text>
+    `);
+  },
+
+  asyncMod10() {
+    const ffs = [0, 1, 2, 3].map((i) => {
+      const x = 68 + i * 126;
+      return `
+        <rect class="box-b" x="${x}" y="34" width="76" height="72"/>
+        <text x="${x + 22}" y="58" class="lbl-b">FF${i}</text>
+        <text x="${x + 12}" y="76" class="lbl-s">T${i} (負エッジ)</text>
+        <text x="${x + 32}" y="100" class="lbl-r">R̄</text>
+        <circle class="gate" cx="${x - 4}" cy="70" r="4"/>
+        <circle class="gate" cx="${x + 38}" cy="110" r="4"/>
+        <path class="wb" d="M${x + 76},52 L${x + 98},52 L${x + 98},16"/>
+        <text x="${x + 90}" y="13" class="lbl-b">Q${i}</text>
+        ${i < 3 ? `<path class="w" d="M${x + 98},52 L${x + 98},70 L${x + 118},70"/>` : ''}
+      `;
+    }).join('');
+    return this._svg(595, 225, `
+      ${ffs}
+      <path class="wr" d="M18,70 L60,70"/>
+      <text x="4" y="64" class="lbl-r">Cp</text>
+
+      <!-- Tap Q1 (x=292) and Q3 (x=544) to 2-input NAND -->
+      <circle class="dot" cx="292" cy="52" r="3"/>
+      <path class="wb" d="M292,52 L292,162 L352,162"/>
+      <circle class="dot" cx="544" cy="52" r="3"/>
+      <path class="wb" d="M544,52 L544,180 L352,180"/>
+
+      ${this._nandGate(352, 155)}
+      <text x="348" y="205" class="lbl-s">2入力NAND (Q3·Q1 = 1010検出)</text>
+
+      <!-- Reset rail from NAND output to all 4 R̄ pins -->
+      <path class="wr" d="M394,171 L426,171 L426,130 L106,130"/>
+      <path class="wr" d="M106,130 L106,114"/>
+      <circle class="dot" cx="232" cy="130" r="3"/><path class="wr" d="M232,130 L232,114"/>
+      <circle class="dot" cx="358" cy="130" r="3"/><path class="wr" d="M358,130 L358,114"/>
+      <path class="wr" d="M426,130 L484,130 L484,114"/>
+      <text x="116" y="126" class="lbl-r">R̄ = (Q3·Q1)̄ → 1010(10)になった瞬間に全FFを0000へリセット</text>
     `);
   }
 };

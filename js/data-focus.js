@@ -274,7 +274,13 @@ window.SwitchStudy = window.SwitchStudy || {};
               </div>
             </div>
           </div>
-          <div class="diagram-box">${D.cla2bit()}<div class="diagram-caption">2ビット桁上げ先見加算器（CLA）の回路構成</div></div>
+          <div class="grid-2">
+            <div class="diagram-box">${D.halfAdder()}<div class="diagram-caption">半加算器（HA）の回路図</div></div>
+            <div class="diagram-box">${D.fullAdder()}<div class="diagram-caption">全加算器（FA）の回路図</div></div>
+          </div>
+          <div class="diagram-box">${D.parallelAdder4()}<div class="diagram-caption">4ビット並列加算器と桁上げ伝搬遅延</div></div>
+          <div class="diagram-box">${D.cla2bit()}<div class="diagram-caption">2ビット桁上げ先見加算器（CLA）の完全ゲート回路図</div></div>
+          <div class="diagram-box">${D.adderSubtractor4()}<div class="diagram-caption">4ビット加減算器（1の補数器 XOR×4 ＋ 全加算器 FA×4）</div></div>
         `,
         learningPoints: [
           { id: 'f3-lp1', text: '全加算器を用いて多ビット並列加算器・加減算器を構成し動作を説明できる' },
@@ -407,6 +413,7 @@ window.SwitchStudy = window.SwitchStudy || {};
               </div>
             </div>
             <div>
+              <div class="diagram-box" style="margin:0 0 10px;">${D.comparator1()}<div class="diagram-caption">1ビット比較器の完全ゲート回路図</div></div>
               <div class="diagram-box" style="margin:0;">${D.comparator2()}<div class="diagram-caption">1ビット比較器×2による2ビット比較器（過去問 問2）</div></div>
             </div>
           </div>
@@ -481,6 +488,14 @@ window.SwitchStudy = window.SwitchStudy || {};
               <div class="diagram-box" style="margin:8px 0 0;">${D.grayConverter3()}<div class="diagram-caption">3ビット 2進-グレイ符号変換回路</div></div>
             </div>
           </div>
+          <div class="grid-2">
+            <div class="diagram-box">${D.encoder2()}<div class="diagram-caption">通常エンコーダ（4→2bit）</div></div>
+            <div class="diagram-box">${D.priorityEncoder2()}<div class="diagram-caption">プライオリティエンコーダ（4→2bit）</div></div>
+          </div>
+          <div class="grid-2">
+            <div class="diagram-box">${D.decoder2()}<div class="diagram-caption">2ビットデコーダ（2→4bit）完全回路図</div></div>
+            <div class="diagram-box">${D.bcdDecoder()}<div class="diagram-caption">BCD-10進デコーダ（ドントケア簡単化・10出力完全図）</div></div>
+          </div>
         `,
         learningPoints: [
           { id: 'f6-lp1', text: 'エンコーダとデコーダの機能の違いを説明できる' },
@@ -545,6 +560,11 @@ window.SwitchStudy = window.SwitchStudy || {};
               <div class="diagram-box" style="margin:0;">${D.mux4From2()}<div class="diagram-caption">1bit 2ch MUX×3 による 4ch MUX（S₀が1段目、S₁が2段目）</div></div>
             </div>
           </div>
+          <div class="grid-2">
+            <div class="diagram-box">${D.mux4Gate()}<div class="diagram-caption">1bit 4ch MUX のゲート回路図</div></div>
+            <div class="diagram-box">${D.mux4FromDecoder()}<div class="diagram-caption">2ビットデコーダを利用した 4ch MUX の回路図</div></div>
+          </div>
+          <div class="diagram-box">${D.demux2bit4ch()}<div class="diagram-caption">2bit 4ch デマルチプレクサ（8AND 完全回路図）</div></div>
         `,
         learningPoints: [
           { id: 'f7-lp1', text: 'MUXとDEMUXの機能・真理値表（ĒĪと×の扱い）・論理式を書ける' },
@@ -613,6 +633,15 @@ window.SwitchStudy = window.SwitchStudy || {};
               </table></div>
             </div>
           </div>
+          <div class="grid-2">
+            <div class="diagram-box">${D.seqBlock()}<div class="diagram-caption">順序回路の基本構成図</div></div>
+            <div class="diagram-box">${D.srLatchNandNor()}<div class="diagram-caption">SRラッチ（NAND構成・NOR構成）</div></div>
+          </div>
+          <div class="grid-2">
+            <div class="diagram-box">${D.srToT()}<div class="diagram-caption">SR-FF → T-FF 変換回路（例題5.6）</div></div>
+            <div class="diagram-box">${D.jkToT()}<div class="diagram-caption">JK-FF → T-FF 変換回路（例題5.8）</div></div>
+          </div>
+          <div class="diagram-box">${D.dToT()}<div class="diagram-caption">D-FF → T-FF 変換回路（演習5.6）</div></div>
         `,
         learningPoints: [
           { id: 'f8-lp1', text: '組合せ回路と順序回路の違いを説明できる' },
@@ -733,7 +762,8 @@ window.SwitchStudy = window.SwitchStudy || {};
               </div>
             </div>
           </div>
-          <div class="diagram-box">${D.asyncMod7()}<div class="diagram-caption">非同期式7進カウンタ（Q₂Q₁Q₀ = 111 をNAND検出して非同期リセット）</div></div>
+          <div class="diagram-box">${D.asyncCounter4()}<div class="diagram-caption">非同期式4ビット（16進）カウンタと全出力 Q₀〜Q₃ の遅延波及</div></div>
+          <div class="diagram-box">${D.asyncMod7()}<div class="diagram-caption">非同期式7進カウンタ（Q₂Q₁Q₀ = 111 を3入力NAND検出して非同期リセット）</div></div>
         `,
         learningPoints: [
           { id: 'f10-lp1', text: '非同期式アップ/ダウンカウンタと分周回路の動作を説明できる' },
@@ -761,6 +791,7 @@ window.SwitchStudy = window.SwitchStudy || {};
               <li>4段分の累積遅延は <span class="formula">4 × 12.5 ns = 50 ns</span>。<br>
                 よって <strong><span class="formula">T<sub>Cp</sub> &gt; 50 ns</span></strong>、最大クロック周波数は <strong><span class="formula">f<sub>Cp</sub> &lt; 1 / (50 × 10<sup>-9</sup>) = 20 MHz</span></strong>。</li>
             </ol>
+            <div class="diagram-box">${D.asyncMod10()}<div class="diagram-caption">非同期式10進カウンタの完全回路図（Q₃·Q₁ の2入力NANDで 1010 検出→リセット）</div></div>
           `
         }
       }
